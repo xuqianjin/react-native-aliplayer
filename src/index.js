@@ -14,7 +14,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
 import { Icon, Slider, Button } from 'react-native-elements';
-import Orientation from 'react-native-orientation';
+import Orientation from 'react-native-orientation-locker';
 import { useDeviceOrientation, useBackHandler, useAppState } from '@react-native-community/hooks';
 
 import ALIViewPlayer from './ALIViewPlayer';
