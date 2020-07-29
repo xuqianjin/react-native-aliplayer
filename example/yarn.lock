@@ -5500,15 +5500,12 @@ react-is@^16.12.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4, react-i
   resolved "https://registry.npm.taobao.org/react-is/download/react-is-16.13.1.tgz?cache=0&sync_timestamp=1595005282006&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Freact-is%2Fdownload%2Freact-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha1-eJcppNw23imZ3BVt1sHZwYzqVqQ=
 
-react-native-aliplayer@^1.0.1:
+"react-native-aliplayer@https://github.com/xuqianjin/react-native-aliplayer.git":
   version "1.0.1"
-  resolved "https://registry.npm.taobao.org/react-native-aliplayer/download/react-native-aliplayer-1.0.1.tgz?cache=0&sync_timestamp=1596017919232&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Freact-native-aliplayer%2Fdownload%2Freact-native-aliplayer-1.0.1.tgz#7774db3fa24ecefcb5b47ccf4615f4eedf17af16"
-  integrity sha1-d3TbP6JOzvy1tHzPRhX07t8XrxY=
+  resolved "https://github.com/xuqianjin/react-native-aliplayer.git#3f85e1b0b87804bba01fcabc3366bd22043643eb"
   dependencies:
     "@react-native-community/hooks" "^2.6.0"
     prop-types "^15.7.2"
-    react "^16.13.1"
-    react-native "^0.63.2"
     react-native-elements "^2.0.4"
     react-native-orientation "^3.1.3"
 
@@ -5559,7 +5556,7 @@ react-native-vector-icons@^7.0.0:
     prop-types "^15.7.2"
     yargs "^15.0.2"
 
-react-native@0.63.2, react-native@^0.63.2:
+react-native@0.63.2:
   version "0.63.2"
   resolved "https://registry.npm.taobao.org/react-native/download/react-native-0.63.2.tgz?cache=0&sync_timestamp=1596004814539&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Freact-native%2Fdownload%2Freact-native-0.63.2.tgz#eaebf3430577b37fbd66ef228a86b3408259ef8e"
   integrity sha1-6uvzQwV3s3+9Zu8iioazQIJZ744=
@@ -5607,7 +5604,7 @@ react-test-renderer@16.13.1:
     react-is "^16.8.6"
     scheduler "^0.19.1"
 
-react@16.13.1, react@^16.13.1:
+react@16.13.1:
   version "16.13.1"
   resolved "https://registry.npm.taobao.org/react/download/react-16.13.1.tgz?cache=0&sync_timestamp=1595006595947&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Freact%2Fdownload%2Freact-16.13.1.tgz#2e818822f1a9743122c063d6410d85c1e3afe48e"
   integrity sha1-LoGIIvGpdDEiwGPWQQ2FweOv5I4=
