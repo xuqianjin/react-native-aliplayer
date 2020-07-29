@@ -471,5 +471,4 @@ Player.propTypes = {
 Player.defaultProps = {
   onFullScreen: () => {},
   onCompletion: () => {},
-  disableFullScreen: true,
 };
