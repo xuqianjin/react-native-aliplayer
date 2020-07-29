@@ -10,7 +10,6 @@ buildscript {
         repositories {
             google()
             jcenter()
-            maven() { url 'https://maven.aliyun.com/repository/releases' }
         }
         dependencies {
             classpath 'com.android.tools.build:gradle:3.4.2'
@@ -42,9 +41,6 @@ repositories {
     maven {
         // Android JSC is installed from npm
         url "$rootDir/../node_modules/jsc-android/dist"
-    }
-    maven() {
-        url 'https://maven.aliyun.com/repository/releases'
     }
     google()
     jcenter()
