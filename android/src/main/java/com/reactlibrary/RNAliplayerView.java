@@ -2,8 +2,6 @@ package com.reactlibrary;
 
 import android.graphics.Color;
 import android.util.Log;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +13,7 @@ import com.aliyun.player.bean.ErrorInfo;
 import com.aliyun.player.bean.InfoBean;
 import com.aliyun.player.bean.InfoCode;
 import com.aliyun.player.nativeclass.PlayerConfig;
+import com.aliyun.player.nativeclass.TrackInfo;
 import com.aliyun.player.source.UrlSource;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
@@ -24,13 +23,14 @@ import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
+import com.txliveSdk.HackSuperPlayerView;
 
+import java.util.List;
 import java.util.Map;
 
-public class RNAliplayerView extends SimpleViewManager<SurfaceView> {
+public class RNAliplayerView extends SimpleViewManager<AliSurfaceView> {
     private static final String REACT_CLASS = "RNAliplayer";
     private static final String TAG = REACT_CLASS;
-    private AliPlayer aliyunVodPlayer;
     private RCTEventEmitter mEventEmitter;
 
     private enum Events {
@@ -67,10 +67,9 @@ public class RNAliplayerView extends SimpleViewManager<SurfaceView> {
 
     @NonNull
     @Override
-    protected SurfaceView createViewInstance(@NonNull ThemedReactContext reactContext) {
-        aliyunVodPlayer = AliPlayerFactory.createAliPlayer(reactContext);
+    protected AliSurfaceView createViewInstance(@NonNull ThemedReactContext reactContext) {
         mEventEmitter = reactContext.getJSModule(RCTEventEmitter.class);
-        SurfaceView view = this.initView(reactContext);
+        AliSurfaceView view = new AliSurfaceView(reactContext);
         this.initConfig(view);
         this.initListener(view);
         return view;
@@ -87,194 +86,193 @@ public class RNAliplayerView extends SimpleViewManager<SurfaceView> {
     }
 
     @Override
-    public void onDropViewInstance(SurfaceView view) {
+    public void onDropViewInstance(AliSurfaceView view) {
         super.onDropViewInstance(view);
         Log.i(TAG, "onDropViewInstance: ");
     }
 
     @Override
-    public void receiveCommand(SurfaceView view, String command, @Nullable ReadableArray args) {
+    public void receiveCommand(AliSurfaceView view, String command, @Nullable ReadableArray args) {
         // This will be called whenever a command is sent from react-native.
         Log.i(TAG, "receiveCommand: " + command);
         switch (command) {
             case "startPlay":
-                aliyunVodPlayer.start();
+                view.aliyunVodPlayer.start();
                 break;
             case "pausePlay":
-                aliyunVodPlayer.pause();
+                view.aliyunVodPlayer.pause();
                 break;
             case "stopPlay":
-                aliyunVodPlayer.stop();
+                view.aliyunVodPlayer.stop();
                 break;
             case "reloadPlay":
-                aliyunVodPlayer.reload();
+                view.aliyunVodPlayer.reload();
                 break;
             case "restartPlay":
-                aliyunVodPlayer.reset();
-                aliyunVodPlayer.prepare();
-                aliyunVodPlayer.start();
+                view.aliyunVodPlayer.seekTo(0, IPlayer.SeekMode.Accurate);
+                view.aliyunVodPlayer.start();
                 break;
             case "destroyPlay":
-                aliyunVodPlayer.release();
+                view.aliyunVodPlayer.release();
                 break;
             case "seekTo":
                 long position = args.getInt(0) * 1000;
-                aliyunVodPlayer.seekTo(position, IPlayer.SeekMode.Accurate);
+                view.aliyunVodPlayer.seekTo(position, IPlayer.SeekMode.Accurate);
                 break;
         }
     }
 
     //设置播放源
     @ReactProp(name = "source")
-    public void setSrc(SurfaceView view, String src) {
+    public void setSrc(AliSurfaceView view, String src) {
         Log.i(TAG, "setSrc: " + src);
         UrlSource source = new UrlSource();
         source.setUri(src);
-        aliyunVodPlayer.reset();
-        aliyunVodPlayer.setDataSource(source);
-        aliyunVodPlayer.prepare();
+        view.aliyunVodPlayer.setDataSource(source);
+        view.aliyunVodPlayer.prepare();
     }
 
     //设置自动播放
     @ReactProp(name = "setAutoPlay")
-    public void setAutoPlay(SurfaceView view, Boolean mode) {
-        aliyunVodPlayer.setAutoPlay(mode);
+    public void setAutoPlay(AliSurfaceView view, Boolean mode) {
+        view.aliyunVodPlayer.setAutoPlay(mode);
     }
 
     //设置循环播放
     @ReactProp(name = "setLoop")
-    public void setLoop(SurfaceView view, Boolean mode) {
-        aliyunVodPlayer.setLoop(mode);
+    public void setLoop(AliSurfaceView view, Boolean mode) {
+        view.aliyunVodPlayer.setLoop(mode);
     }
 
     //设置播放器静音
     @ReactProp(name = "setMute")
-    public void setMute(SurfaceView view, Boolean mode) {
-        aliyunVodPlayer.setMute(mode);
+    public void setMute(AliSurfaceView view, Boolean mode) {
+        view.aliyunVodPlayer.setMute(mode);
     }
 
     //开启硬解。默认开启
     @ReactProp(name = "enableHardwareDecoder")
-    public void enableHardwareDecoder(SurfaceView view, Boolean mode) {
-        aliyunVodPlayer.enableHardwareDecoder(mode);
+    public void enableHardwareDecoder(AliSurfaceView view, Boolean mode) {
+        view.aliyunVodPlayer.enableHardwareDecoder(mode);
     }
 
     //设置播放器音量,范围0~1.
     @ReactProp(name = "setVolume")
-    public void setVolume(SurfaceView view, float mode) {
-        aliyunVodPlayer.setVolume(mode);
+    public void setVolume(AliSurfaceView view, float mode) {
+        view.aliyunVodPlayer.setVolume(mode);
     }
 
     //设置倍速播放:支持0.5~2倍速的播放
     @ReactProp(name = "setSpeed")
-    public void setSpeed(SurfaceView view, float mode) {
-        aliyunVodPlayer.setSpeed(mode);
+    public void setSpeed(AliSurfaceView view, float mode) {
+        view.aliyunVodPlayer.setSpeed(mode);
     }
 
     //设置Referer
     @ReactProp(name = "setReferer")
-    public void setReferer(SurfaceView view, String referrer) {
+    public void setReferer(AliSurfaceView view, String referrer) {
         //先获取配置
-        PlayerConfig config = aliyunVodPlayer.getConfig();
+        PlayerConfig config = view.aliyunVodPlayer.getConfig();
         //设置referer
         config.mReferrer = referrer;
         //设置配置给播放器
-        aliyunVodPlayer.setConfig(config);
+        view.aliyunVodPlayer.setConfig(config);
     }
 
     //设置UserAgent
     @ReactProp(name = "setUserAgent")
-    public void setUserAgent(SurfaceView view, String UserAgent) {
+    public void setUserAgent(AliSurfaceView view, String UserAgent) {
         //先获取配置
-        PlayerConfig config = aliyunVodPlayer.getConfig();
+        PlayerConfig config = view.aliyunVodPlayer.getConfig();
         //设置UA
         config.mUserAgent = UserAgent;
         //设置配置给播放器
-        aliyunVodPlayer.setConfig(config);
+        view.aliyunVodPlayer.setConfig(config);
     }
 
     //设置画面的镜像模式：水平镜像，垂直镜像，无镜像。
     @ReactProp(name = "setMirrorMode")
-    public void setMirrorMode(SurfaceView view, int mode) {
+    public void setMirrorMode(AliSurfaceView view, int mode) {
         switch (mode) {
             case 0:
-                aliyunVodPlayer.setMirrorMode(IPlayer.MirrorMode.MIRROR_MODE_NONE);
+                view.aliyunVodPlayer.setMirrorMode(IPlayer.MirrorMode.MIRROR_MODE_NONE);
                 break;
             case 1:
-                aliyunVodPlayer.setMirrorMode(IPlayer.MirrorMode.MIRROR_MODE_HORIZONTAL);
+                view.aliyunVodPlayer.setMirrorMode(IPlayer.MirrorMode.MIRROR_MODE_HORIZONTAL);
                 break;
             case 2:
-                aliyunVodPlayer.setMirrorMode(IPlayer.MirrorMode.MIRROR_MODE_VERTICAL);
+                view.aliyunVodPlayer.setMirrorMode(IPlayer.MirrorMode.MIRROR_MODE_VERTICAL);
                 break;
         }
     }
 
     //设置画面旋转模式：旋转0度，90度，180度，270度
     @ReactProp(name = "setRotateMode")
-    public void setRotateMode(SurfaceView view, int mode) {
+    public void setRotateMode(AliSurfaceView view, int mode) {
         switch (mode) {
             case 0:
-                aliyunVodPlayer.setRotateMode(IPlayer.RotateMode.ROTATE_0);
+                view.aliyunVodPlayer.setRotateMode(IPlayer.RotateMode.ROTATE_0);
                 break;
             case 1:
-                aliyunVodPlayer.setRotateMode(IPlayer.RotateMode.ROTATE_90);
+                view.aliyunVodPlayer.setRotateMode(IPlayer.RotateMode.ROTATE_90);
                 break;
             case 2:
-                aliyunVodPlayer.setRotateMode(IPlayer.RotateMode.ROTATE_180);
+                view.aliyunVodPlayer.setRotateMode(IPlayer.RotateMode.ROTATE_180);
                 break;
             case 3:
-                aliyunVodPlayer.setRotateMode(IPlayer.RotateMode.ROTATE_270);
+                view.aliyunVodPlayer.setRotateMode(IPlayer.RotateMode.ROTATE_270);
                 break;
         }
     }
 
     //设置画面缩放模式：宽高比填充，宽高比适应，拉伸填充
     @ReactProp(name = "setScaleMode")
-    public void setScaleMode(SurfaceView view, int mode) {
+    public void setScaleMode(AliSurfaceView view, int mode) {
         switch (mode) {
             case 0:
-                aliyunVodPlayer.setScaleMode(IPlayer.ScaleMode.SCALE_ASPECT_FIT);
+                view.aliyunVodPlayer.setScaleMode(IPlayer.ScaleMode.SCALE_ASPECT_FIT);
                 break;
             case 1:
-                aliyunVodPlayer.setScaleMode(IPlayer.ScaleMode.SCALE_ASPECT_FILL);
+                view.aliyunVodPlayer.setScaleMode(IPlayer.ScaleMode.SCALE_ASPECT_FILL);
                 break;
             case 2:
-                aliyunVodPlayer.setScaleMode(IPlayer.ScaleMode.SCALE_TO_FILL);
+                view.aliyunVodPlayer.setScaleMode(IPlayer.ScaleMode.SCALE_TO_FILL);
                 break;
         }
         view.requestLayout();
     }
 
 
-    private SurfaceView initView(ThemedReactContext reactContext) {
-        SurfaceView view = new SurfaceView(reactContext);
-        view.getHolder().addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(SurfaceHolder holder) {
-                aliyunVodPlayer.setDisplay(holder);
-            }
+//    private SurfaceView initView(ThemedReactContext reactContext) {
+//        SurfaceView view = new SurfaceView(reactContext);
+//        view.getHolder().addCallback(new SurfaceHolder.Callback() {
+//            @Override
+//            public void surfaceCreated(SurfaceHolder holder) {
+//                view.aliyunVodPlayer.setDisplay(holder);
+//            }
+//
+//            @Override
+//            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+//                Log.i(TAG, "surfaceChanged: ");
+//                view.aliyunVodPlayer.redraw();
+//            }
+//
+//            @Override
+//            public void surfaceDestroyed(SurfaceHolder holder) {
+//                Log.i(TAG, "surfaceChanged: ");
+//                view.aliyunVodPlayer.setDisplay(null);
+//            }
+//        });
+//        return view;
+//    }
 
-            @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-                aliyunVodPlayer.redraw();
-                Log.i(TAG, "surfaceChanged: ");
-            }
-
-            @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
-                aliyunVodPlayer.setDisplay(null);
-                Log.i(TAG, "surfaceDestroyed: ");
-            }
-        });
-        return view;
+    private void initConfig(AliSurfaceView view) {
+        view.aliyunVodPlayer.setVideoBackgroundColor(Color.TRANSPARENT);
+        view.setBackgroundColor(Color.TRANSPARENT);
     }
 
-    private void initConfig(SurfaceView view) {
-        aliyunVodPlayer.setVideoBackgroundColor(Color.TRANSPARENT);
-    }
-
-    private void initListener(final SurfaceView view) {
-        aliyunVodPlayer.setOnInfoListener(new IPlayer.OnInfoListener() {
+    private void initListener(AliSurfaceView view) {
+        view.aliyunVodPlayer.setOnInfoListener(new IPlayer.OnInfoListener() {
             @Override
             public void onInfo(InfoBean infoBean) {
                 WritableMap event = Arguments.createMap();
@@ -291,18 +289,18 @@ public class RNAliplayerView extends SimpleViewManager<SurfaceView> {
                 }
             }
         });
-        aliyunVodPlayer.setOnPreparedListener(new IPlayer.OnPreparedListener() {
+        view.aliyunVodPlayer.setOnPreparedListener(new IPlayer.OnPreparedListener() {
             @Override
             public void onPrepared() {
-                Log.i(TAG, "onPrepared: " + aliyunVodPlayer.getDuration() / 1000);
+                Log.i(TAG, "onPrepared: " + view.aliyunVodPlayer.getDuration() / 1000);
 
                 WritableMap event = Arguments.createMap();
-                int duration = (int) (aliyunVodPlayer.getDuration() / 1000);//转换成秒
+                int duration = (int) (view.aliyunVodPlayer.getDuration() / 1000);//转换成秒
                 event.putInt("duration", duration);
                 mEventEmitter.receiveEvent(view.getId(), Events.onPrepared.toString(), event);
             }
         });
-        aliyunVodPlayer.setOnCompletionListener(new IPlayer.OnCompletionListener() {
+        view.aliyunVodPlayer.setOnCompletionListener(new IPlayer.OnCompletionListener() {
             @Override
             public void onCompletion() {
                 Log.i(TAG, "onCompletion: ");
@@ -311,7 +309,7 @@ public class RNAliplayerView extends SimpleViewManager<SurfaceView> {
                 mEventEmitter.receiveEvent(view.getId(), Events.onCompletion.toString(), event);
             }
         });
-        aliyunVodPlayer.setOnErrorListener(new IPlayer.OnErrorListener() {
+        view.aliyunVodPlayer.setOnErrorListener(new IPlayer.OnErrorListener() {
             @Override
             public void onError(ErrorInfo errorInfo) {
                 Log.i(TAG, "onError: " + errorInfo.getExtra());
@@ -324,7 +322,7 @@ public class RNAliplayerView extends SimpleViewManager<SurfaceView> {
                 mEventEmitter.receiveEvent(view.getId(), Events.onError.toString(), event);
             }
         });
-        aliyunVodPlayer.setOnRenderingStartListener(new IPlayer.OnRenderingStartListener() {
+        view.aliyunVodPlayer.setOnRenderingStartListener(new IPlayer.OnRenderingStartListener() {
             @Override
             public void onRenderingStart() {
                 Log.i(TAG, "onRenderingStart: ");
@@ -333,7 +331,7 @@ public class RNAliplayerView extends SimpleViewManager<SurfaceView> {
                 mEventEmitter.receiveEvent(view.getId(), Events.onRenderingStart.toString(), event);
             }
         });
-        aliyunVodPlayer.setOnSeekCompleteListener(new IPlayer.OnSeekCompleteListener() {
+        view.aliyunVodPlayer.setOnSeekCompleteListener(new IPlayer.OnSeekCompleteListener() {
             @Override
             public void onSeekComplete() {
                 Log.i(TAG, "onSeekComplete: ");
@@ -343,7 +341,7 @@ public class RNAliplayerView extends SimpleViewManager<SurfaceView> {
             }
         });
 
-        aliyunVodPlayer.setOnLoadingStatusListener(new IPlayer.OnLoadingStatusListener() {
+        view.aliyunVodPlayer.setOnLoadingStatusListener(new IPlayer.OnLoadingStatusListener() {
             @Override
             public void onLoadingBegin() {
                 Log.i(TAG, "onLoadingBegin: ");

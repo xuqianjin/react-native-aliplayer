@@ -1,0 +1,35 @@
+package com.reactlibrary;
+
+import android.content.Context;
+import android.util.Log;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+
+import com.aliyun.player.AliPlayer;
+import com.aliyun.player.AliPlayerFactory;
+
+public class AliSurfaceView extends SurfaceView {
+    public AliPlayer aliyunVodPlayer;
+
+    public AliSurfaceView(Context context) {
+        super(context);
+        aliyunVodPlayer = AliPlayerFactory.createAliPlayer(context);
+        this.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+                aliyunVodPlayer.setDisplay(holder);
+
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+                aliyunVodPlayer.redraw();
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+                aliyunVodPlayer.setDisplay(null);
+            }
+        });
+    }
+}

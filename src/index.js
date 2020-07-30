@@ -1,21 +1,20 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import {
   View,
   TouchableOpacity,
   Text,
   StyleSheet,
   ActivityIndicator,
-  Dimensions,
   StatusBar,
   Animated,
   Easing,
   Image,
+  SafeAreaView,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
 import { Icon, Slider, Button } from 'react-native-elements';
-import Orientation from 'react-native-orientation-locker';
-import { useDeviceOrientation, useBackHandler, useAppState } from '@react-native-community/hooks';
+import { useBackHandler, useAppState, useDimensions } from '@react-native-community/hooks';
 
 import ALIViewPlayer from './ALIViewPlayer';
 import useTimeout from './useTimeout';
@@ -23,8 +22,6 @@ import useUpdateEffect from './useUpdateEffect';
 
 const GradientWhite = 'rgba(0,0,0,0)';
 const GradientBlack = 'rgba(0,0,0,0.3)';
-const screenWidth = Math.round(Dimensions.get('window').width);
-const screenHeight = Math.round(Dimensions.get('window').height);
 const controlerHeight = 40;
 
 const AnimateLinearGradient = Animated.createAnimatedComponent(LinearGradient);
@@ -37,7 +34,6 @@ const styles = StyleSheet.create({
   controler: {
     ...StyleSheet.absoluteFill,
     justifyContent: 'space-between',
-    alignItems: 'center',
   },
   stateview: {
     ...StyleSheet.absoluteFill,
@@ -50,7 +46,9 @@ const styles = StyleSheet.create({
   textTime: {
     color: 'white',
   },
-  stateViewLoading: {},
+  stateViewLoading: {
+    maxWidth: '50%',
+  },
   stateViewError: {
     width: 200,
     alignItems: 'center',
@@ -91,15 +89,18 @@ const styles = StyleSheet.create({
     flex: 0.8,
     marginHorizontal: 5,
   },
-  fullscreen: {
-    ...StyleSheet.absoluteFill,
-    width: screenHeight,
-    height: screenWidth,
-    zIndex: 99999,
-  },
   retryButton: {
     width: 100,
     height: 50,
+  },
+  progressView: {
+    width: '100%',
+    height: 2,
+    position: 'absolute',
+    bottom: 0,
+  },
+  progressValue: {
+    height: '100%',
   },
 });
 
@@ -121,24 +122,43 @@ function ContorIcon({ ...props }) {
   return <Icon type="antdesign" color="white" size={20} {...props} />;
 }
 
+function Progress({ disable, value, maxValue, themeColor }) {
+  if (disable) {
+    return null;
+  }
+  const progress = `${maxValue ? Math.floor((value * 100) / maxValue) : 0}%`;
+  return (
+    <View style={styles.progressView}>
+      <View style={[styles.progressValue, { width: progress, backgroundColor: themeColor }]}></View>
+    </View>
+  );
+}
+
 function StateView({
   title,
   isPlaying,
-  isLoding,
+  isLoading,
   isError,
   loadingObj = {},
   errorObj = {},
   onPressPlay,
   onPressReload,
+  themeColor,
 }) {
   const { percent } = loadingObj;
   const { message } = errorObj;
   let view = null;
-  if (isLoding) {
+  if (isLoading) {
     view = (
       <View style={styles.stateViewLoading}>
-        <ActivityIndicator size="large" />
-        {!!title && <Text style={styles.textLoadingTitle}>{`当前播放:${title}`}</Text>}
+        <ActivityIndicator size="large" color={themeColor} />
+        {!!title && (
+          <Text
+            style={styles.textLoadingTitle}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >{`当前播放:${title}`}</Text>
+        )}
         <Text style={styles.textLoading}>
           <Text>缓冲中...</Text>
           {!!percent && <Text>{`${percent}%`}</Text>}
@@ -150,40 +170,40 @@ function StateView({
     view = (
       <PressView onPress={onPressPlay}>
         <ContorIcon size={40} name="playcircleo" />
+        {!!title && (
+          <Text
+            style={styles.textLoadingTitle}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >{`${title}`}</Text>
+        )}
       </PressView>
     );
   }
   if (isError) {
     view = (
       <View style={styles.stateViewError}>
-        <Text style={styles.textError}>播放错误:{message}</Text>
+        <Text
+          style={styles.textError}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >{`播放出错:${message}`}</Text>
         <Button
-          icon={{
-            name: 'reload1',
-            size: 12,
-            color: 'white',
-            type: 'antdesign',
-          }}
           title="重试"
           titleStyle={{ fontSize: 12 }}
-          buttonStyle={{ width: 80, height: 30 }}
+          buttonStyle={{ width: 80, height: 30, backgroundColor: themeColor }}
           onPress={onPressReload}
         />
       </View>
     );
   }
-  return <View style={styles.stateview}>{view}</View>;
+  return (
+    <View style={styles.stateview} pointerEvents="box-none">
+      {view}
+    </View>
+  );
 }
 
-const animateValue = new Animated.Value(0);
-const bottomAnimate = animateValue.interpolate({
-  inputRange: [0, 1],
-  outputRange: [controlerHeight, 0],
-});
-const headerAnimate = animateValue.interpolate({
-  inputRange: [0, 1],
-  outputRange: [-controlerHeight, 0],
-});
 function ControlerView({
   title = '',
   visible = true,
@@ -192,15 +212,33 @@ function ControlerView({
   total = 0,
   isPlaying = false,
   disableFullScreen = false,
+  onPressPlay,
   onPressPause,
-  onPressFull,
-  onPressBack,
+  onPressFullIn,
+  onPressFullOut,
   onSlide,
+  themeColor,
 }) {
   const [value, setValue] = useState(current);
   const isSliding = useRef(false);
   const valueFormat = formatTime(value);
   const totalFormat = formatTime(total);
+  const { animateValue, bottomAnimate, headerAnimate } = useMemo(() => {
+    const animateValue = new Animated.Value(0);
+    const bottomAnimate = animateValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [controlerHeight * 2, 0],
+    });
+    const headerAnimate = animateValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [-controlerHeight * 2, 0],
+    });
+    return {
+      animateValue,
+      bottomAnimate,
+      headerAnimate,
+    };
+  }, []);
 
   useEffect(() => {
     if (!isSliding.current) {
@@ -211,20 +249,20 @@ function ControlerView({
   useEffect(() => {
     Animated.timing(animateValue, {
       toValue: visible ? 1 : 0,
-      duration: 200,
+      duration: 300,
       easing: Easing.linear,
       useNativeDriver: true,
     }).start();
-  }, [visible]);
+  }, [visible, animateValue]);
 
   return (
-    <View style={styles.controler}>
+    <SafeAreaView style={styles.controler}>
       <AnimateLinearGradient
         colors={[GradientBlack, GradientWhite]}
         style={[styles.header, { transform: [{ translateY: headerAnimate }] }]}
       >
         {isFull && (
-          <PressView onPress={onPressBack}>
+          <PressView onPress={onPressFullOut}>
             <ContorIcon name="left" />
           </PressView>
         )}
@@ -234,7 +272,7 @@ function ControlerView({
         colors={[GradientWhite, GradientBlack]}
         style={[styles.bottom, { transform: [{ translateY: bottomAnimate }] }]}
       >
-        <PressView onPress={onPressPause}>
+        <PressView onPress={isPlaying ? onPressPause : onPressPlay}>
           <ContorIcon name={isPlaying ? 'pausecircleo' : 'playcircleo'} />
         </PressView>
         <Text style={styles.textTime}>{`${valueFormat.M}:${valueFormat.S}`}</Text>
@@ -244,7 +282,7 @@ function ControlerView({
           minimumValue={0}
           maximumValue={total}
           style={styles.bottomSlide}
-          minimumTrackTintColor="#F85959"
+          minimumTrackTintColor={themeColor}
           thumbTintColor="white"
           maximumTrackTintColor="white"
           trackStyle={{ height: 2 }}
@@ -262,12 +300,13 @@ function ControlerView({
         />
         <Text style={styles.textTime}>{`${totalFormat.M}:${totalFormat.S}`}</Text>
         {!disableFullScreen && (
-          <PressView onPress={onPressFull}>
+          <PressView onPress={isFull ? onPressFullOut : onPressFullIn}>
             <ContorIcon name={isFull ? 'shrink' : 'arrowsalt'} />
           </PressView>
         )}
       </AnimateLinearGradient>
-    </View>
+      <Progress disable={visible} value={value} maxValue={total} themeColor={themeColor} />
+    </SafeAreaView>
   );
 }
 
@@ -276,6 +315,7 @@ export default function Player({
   source,
   poster,
   style,
+  themeColor,
   onFullScreen,
   onCompletion,
   disableFullScreen,
@@ -293,21 +333,21 @@ export default function Player({
   const [total, setTotal] = useState(0);
   const [current, setCurrent] = useState(0);
   const [posterVisible, setPosterVisible] = useState(Boolean(poster));
-  const { portrait, landscape } = useDeviceOrientation();
+  const window = useDimensions().window;
   const currentAppState = useAppState();
-
   const [_, clear, set] = useTimeout(() => {
     setControlerVisible(false);
   }, 5000);
 
-  // 处理切换资源,直接播放
+  // 处理切换资源
   useUpdateEffect(() => {
-    if (!source) {
+    if (!source || !isPlaying) {
       return;
     }
     setLoading(true);
     setLoadingObj({});
     setError(false);
+    setIsPlaying(true);
     playerRef.current.startPlay();
   }, [source]);
 
@@ -318,16 +358,6 @@ export default function Player({
     }
   }, [currentAppState]);
 
-  useEffect(() => {
-    if (isFull) {
-      Orientation.lockToLandscape();
-    } else {
-      Orientation.lockToPortrait();
-    }
-    onFullScreen(isFull);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFull]);
-
   useBackHandler(() => {
     if (isFull) {
       setIsFull(false);
@@ -337,7 +367,11 @@ export default function Player({
   });
 
   const handlePlay = () => {
-    playerRef.current.startPlay();
+    if (isComplate) {
+      playerRef.current.restartPlay();
+    } else {
+      playerRef.current.startPlay();
+    }
     setIsPlaying(true);
   };
 
@@ -355,6 +389,16 @@ export default function Player({
     playerRef.current.seekTo(value);
   };
 
+  const handleFullScreenIn = () => {
+    setIsFull(true);
+    onFullScreen(true);
+  };
+
+  const handleFullScreenOut = () => {
+    onFullScreen(false);
+    setIsFull(false);
+  };
+
   const handlePressPlayer = () => {
     if (controlerVisible) {
       setControlerVisible(false);
@@ -365,31 +409,20 @@ export default function Player({
     }
   };
 
-  const handlePressPlay = () => {
-    if (isComplate) {
-      playerRef.current.restartPlay();
-    } else {
-      if (isPlaying) {
-        handlePause();
-      } else {
-        handlePlay();
-      }
-    }
-  };
-
-  const handleFullScreen = () => {
-    setIsFull((o) => !o);
-  };
-
-  const handleBackFullScreen = () => {
-    setIsFull(false);
+  const fullscreenStyle = {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: window.width,
+    height: window.height,
+    zIndex: 100,
   };
 
   return (
     <PressView
-      style={[styles.base, portrait && style, landscape && styles.fullscreen]}
       activeOpacity={1}
       onPress={handlePressPlayer}
+      style={[styles.base, isFull ? fullscreenStyle : style]}
     >
       <StatusBar hidden={isFull} />
       <ALIViewPlayer
@@ -398,6 +431,7 @@ export default function Player({
         ref={playerRef}
         style={StyleSheet.absoluteFill}
         onPrepared={({ nativeEvent }) => {
+          setCurrent(0);
           setTotal(nativeEvent.duration);
         }}
         onLoadingBegin={() => {
@@ -441,19 +475,22 @@ export default function Player({
         total={total}
         onSlide={handleSlide}
         isPlaying={isPlaying}
-        onPressPause={handlePressPlay}
-        onPressFull={handleFullScreen}
-        onPressBack={handleBackFullScreen}
+        themeColor={themeColor}
+        onPressPlay={handlePlay}
+        onPressPause={handlePause}
+        onPressFullIn={handleFullScreenIn}
+        onPressFullOut={handleFullScreenOut}
         disableFullScreen={disableFullScreen}
       />
       <StateView
         title={title}
-        isPlaying={isPlaying}
-        isLoding={loading}
         isError={error}
-        loadingObj={loadingObj}
+        isLoading={loading}
         errorObj={errorObj}
-        onPressPlay={handlePressPlay}
+        isPlaying={isPlaying}
+        loadingObj={loadingObj}
+        themeColor={themeColor}
+        onPressPlay={handlePlay}
         onPressReload={handleReload}
       />
     </PressView>
@@ -461,14 +498,17 @@ export default function Player({
 }
 
 Player.propTypes = {
+  ...ALIViewPlayer.propTypes,
   source: PropTypes.string, // 播放地址
   poster: Image.propTypes.source, // 封面图
   onFullScreen: PropTypes.func, // 全屏回调事件
   onCompletion: PropTypes.func, // 播放完成事件
   disableFullScreen: PropTypes.bool, // 禁止全屏
+  themeColor: PropTypes.string, // 播放器主题
 };
 
 Player.defaultProps = {
   onFullScreen: () => {},
   onCompletion: () => {},
+  themeColor: '#F85959',
 };
