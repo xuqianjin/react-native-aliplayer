@@ -267,7 +267,7 @@ public class RNAliplayerView extends SimpleViewManager<AliSurfaceView> {
         view.setBackgroundColor(Color.TRANSPARENT);
     }
 
-    private void initListener(AliSurfaceView view) {
+    private void initListener(final AliSurfaceView view) {
         view.aliyunVodPlayer.setOnInfoListener(new IPlayer.OnInfoListener() {
             @Override
             public void onInfo(InfoBean infoBean) {
