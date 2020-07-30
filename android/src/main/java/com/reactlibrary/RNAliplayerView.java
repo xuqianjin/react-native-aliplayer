@@ -6,8 +6,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.aliyun.player.AliPlayer;
-import com.aliyun.player.AliPlayerFactory;
 import com.aliyun.player.IPlayer;
 import com.aliyun.player.bean.ErrorInfo;
 import com.aliyun.player.bean.InfoBean;
@@ -23,9 +21,7 @@ import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
-import com.txliveSdk.HackSuperPlayerView;
 
-import java.util.List;
 import java.util.Map;
 
 public class RNAliplayerView extends SimpleViewManager<AliSurfaceView> {
