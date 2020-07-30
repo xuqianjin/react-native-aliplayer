@@ -64,7 +64,7 @@ RCT_EXPORT_METHOD(seekTo:(nonnull NSNumber *) reactTag){
 
 //重写这个方法，返回将要提供给RN使用的视图
 - (UIView *)view {
-  ALIViewPlayer * aliPlayer = [[ALIViewPlayer alloc] init];
+  RNAliplayer * aliPlayer = [[RNAliplayer alloc] init];
   self.aliViewPlayer = aliPlayer;
   return aliPlayer;
 }
