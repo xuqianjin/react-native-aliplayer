@@ -1,4 +1,11 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react';
+import React, {
+  forwardRef,
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  useImperativeHandle,
+} from 'react';
 import {
   View,
   TouchableOpacity,
@@ -310,193 +317,213 @@ function ControlerView({
   );
 }
 
-export default function Player({
-  title,
-  source,
-  poster,
-  style,
-  themeColor,
-  onFullScreen,
-  onCompletion,
-  disableFullScreen,
-  ...restProps
-}) {
-  const playerRef = useRef();
-  const [error, setError] = useState(false);
-  const [errorObj, setErrorObj] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [isFull, setIsFull] = useState(false);
-  const [isComplate, setIsComplate] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [loadingObj, setLoadingObj] = useState({});
-  const [controlerVisible, setControlerVisible] = useState(false);
-  const [total, setTotal] = useState(0);
-  const [current, setCurrent] = useState(0);
-  const [posterVisible, setPosterVisible] = useState(Boolean(poster));
-  const window = useDimensions().window;
-  const currentAppState = useAppState();
-  const [_, clear, set] = useTimeout(() => {
-    setControlerVisible(false);
-  }, 5000);
+const Player = forwardRef(
+  (
+    {
+      title,
+      source,
+      poster,
+      style,
+      themeColor,
+      onFullScreen,
+      onCompletion,
+      disableFullScreen,
+      ...restProps
+    },
+    ref
+  ) => {
+    const playerRef = useRef();
+    const [error, setError] = useState(false);
+    const [errorObj, setErrorObj] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [isFull, setIsFull] = useState(false);
+    const [isComplate, setIsComplate] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [loadingObj, setLoadingObj] = useState({});
+    const [controlerVisible, setControlerVisible] = useState(false);
+    const [total, setTotal] = useState(0);
+    const [current, setCurrent] = useState(0);
+    const [posterVisible, setPosterVisible] = useState(Boolean(poster));
+    const window = useDimensions().window;
+    const currentAppState = useAppState();
+    useImperativeHandle(ref, () => ({
+      play: (play) => {
+        if (play) {
+          handlePlay();
+        } else {
+          handlePause();
+        }
+      },
+      fullscreen: (full) => {
+        if (full) {
+          handleFullScreenIn();
+        } else {
+          handleFullScreenOut();
+        }
+      },
+    }));
+    const [_, clear, set] = useTimeout(() => {
+      setControlerVisible(false);
+    }, 5000);
 
-  // 处理切换资源
-  useUpdateEffect(() => {
-    if (!source || !isPlaying) {
-      return;
-    }
-    setLoading(true);
-    setLoadingObj({});
-    setError(false);
-    setIsPlaying(true);
-    playerRef.current.startPlay();
-  }, [source]);
+    // 处理切换资源
+    useUpdateEffect(() => {
+      if (!source || !isPlaying) {
+        return;
+      }
+      setLoading(true);
+      setLoadingObj({});
+      setError(false);
+      setIsPlaying(true);
+      playerRef.current.startPlay();
+    }, [source]);
 
-  useEffect(() => {
-    if (currentAppState === 'background') {
+    useEffect(() => {
+      if (currentAppState === 'background') {
+        playerRef.current.pausePlay();
+        setIsPlaying(false);
+      }
+    }, [currentAppState]);
+
+    useBackHandler(() => {
+      if (isFull) {
+        setIsFull(false);
+        return true;
+      }
+      return false;
+    });
+
+    const handlePlay = () => {
+      if (isComplate) {
+        playerRef.current.restartPlay();
+      } else {
+        playerRef.current.startPlay();
+      }
+      setIsPlaying(true);
+    };
+
+    const handlePause = () => {
       playerRef.current.pausePlay();
       setIsPlaying(false);
-    }
-  }, [currentAppState]);
+    };
 
-  useBackHandler(() => {
-    if (isFull) {
+    const handleReload = () => {
+      setError(false);
+      playerRef.current.reloadPlay();
+    };
+
+    const handleSlide = (value) => {
+      playerRef.current.seekTo(value);
+    };
+
+    const handleFullScreenIn = () => {
+      setIsFull(true);
+      onFullScreen(true);
+    };
+
+    const handleFullScreenOut = () => {
+      onFullScreen(false);
       setIsFull(false);
-      return true;
-    }
-    return false;
-  });
+    };
 
-  const handlePlay = () => {
-    if (isComplate) {
-      playerRef.current.restartPlay();
-    } else {
-      playerRef.current.startPlay();
-    }
-    setIsPlaying(true);
-  };
+    const handlePressPlayer = () => {
+      if (controlerVisible) {
+        setControlerVisible(false);
+        clear();
+      } else {
+        setControlerVisible(true);
+        set();
+      }
+    };
 
-  const handlePause = () => {
-    playerRef.current.pausePlay();
-    setIsPlaying(false);
-  };
+    const fullscreenStyle = {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: window.width,
+      height: window.height,
+      zIndex: 100,
+    };
 
-  const handleReload = () => {
-    setError(false);
-    playerRef.current.reloadPlay();
-  };
-
-  const handleSlide = (value) => {
-    playerRef.current.seekTo(value);
-  };
-
-  const handleFullScreenIn = () => {
-    setIsFull(true);
-    onFullScreen(true);
-  };
-
-  const handleFullScreenOut = () => {
-    onFullScreen(false);
-    setIsFull(false);
-  };
-
-  const handlePressPlayer = () => {
-    if (controlerVisible) {
-      setControlerVisible(false);
-      clear();
-    } else {
-      setControlerVisible(true);
-      set();
-    }
-  };
-
-  const fullscreenStyle = {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: window.width,
-    height: window.height,
-    zIndex: 100,
-  };
-
-  return (
-    <PressView
-      activeOpacity={1}
-      onPress={handlePressPlayer}
-      style={[styles.base, isFull ? fullscreenStyle : style]}
-    >
-      <StatusBar hidden={isFull} />
-      <ALIViewPlayer
-        {...restProps}
-        source={source}
-        ref={playerRef}
-        style={StyleSheet.absoluteFill}
-        onPrepared={({ nativeEvent }) => {
-          setCurrent(0);
-          setTotal(nativeEvent.duration);
-        }}
-        onLoadingBegin={() => {
-          setLoading(true);
-          setLoadingObj({});
-        }}
-        onLoadingProgress={({ nativeEvent }) => {
-          setLoadingObj(nativeEvent);
-        }}
-        onLoadingEnd={() => {
-          setLoading(false);
-          setLoadingObj({});
-        }}
-        onRenderingStart={() => {
-          setLoading(false);
-          setIsComplate(false);
-          setIsPlaying(true);
-          setPosterVisible(false);
-        }}
-        onCurrentPositionUpdate={({ nativeEvent }) => {
-          setCurrent(nativeEvent.position);
-        }}
-        onCompletion={() => {
-          setIsComplate(true);
-          setIsPlaying(false);
-          onCompletion();
-        }}
-        onError={({ nativeEvent }) => {
-          setError(true);
-          setErrorObj(nativeEvent);
-        }}
-      />
-      {posterVisible && (
-        <Image source={poster} resizeMode="cover" style={StyleSheet.absoluteFill} />
-      )}
-      <ControlerView
-        title={title}
-        isFull={isFull}
-        visible={controlerVisible}
-        current={current}
-        total={total}
-        onSlide={handleSlide}
-        isPlaying={isPlaying}
-        themeColor={themeColor}
-        onPressPlay={handlePlay}
-        onPressPause={handlePause}
-        onPressFullIn={handleFullScreenIn}
-        onPressFullOut={handleFullScreenOut}
-        disableFullScreen={disableFullScreen}
-      />
-      <StateView
-        title={title}
-        isError={error}
-        isLoading={loading}
-        errorObj={errorObj}
-        isPlaying={isPlaying}
-        loadingObj={loadingObj}
-        themeColor={themeColor}
-        onPressPlay={handlePlay}
-        onPressReload={handleReload}
-      />
-    </PressView>
-  );
-}
-
+    return (
+      <PressView
+        activeOpacity={1}
+        onPress={handlePressPlayer}
+        style={[styles.base, isFull ? fullscreenStyle : style]}
+      >
+        <StatusBar hidden={isFull} />
+        <ALIViewPlayer
+          {...restProps}
+          source={source}
+          ref={playerRef}
+          style={StyleSheet.absoluteFill}
+          onPrepared={({ nativeEvent }) => {
+            setCurrent(0);
+            setTotal(nativeEvent.duration);
+          }}
+          onLoadingBegin={() => {
+            setLoading(true);
+            setLoadingObj({});
+          }}
+          onLoadingProgress={({ nativeEvent }) => {
+            setLoadingObj(nativeEvent);
+          }}
+          onLoadingEnd={() => {
+            setLoading(false);
+            setLoadingObj({});
+          }}
+          onRenderingStart={() => {
+            setLoading(false);
+            setIsComplate(false);
+            setIsPlaying(true);
+            setPosterVisible(false);
+          }}
+          onCurrentPositionUpdate={({ nativeEvent }) => {
+            setCurrent(nativeEvent.position);
+          }}
+          onCompletion={() => {
+            setIsComplate(true);
+            setIsPlaying(false);
+            onCompletion();
+          }}
+          onError={({ nativeEvent }) => {
+            setError(true);
+            setErrorObj(nativeEvent);
+          }}
+        />
+        {posterVisible && (
+          <Image source={poster} resizeMode="cover" style={StyleSheet.absoluteFill} />
+        )}
+        <ControlerView
+          title={title}
+          isFull={isFull}
+          visible={controlerVisible}
+          current={current}
+          total={total}
+          onSlide={handleSlide}
+          isPlaying={isPlaying}
+          themeColor={themeColor}
+          onPressPlay={handlePlay}
+          onPressPause={handlePause}
+          onPressFullIn={handleFullScreenIn}
+          onPressFullOut={handleFullScreenOut}
+          disableFullScreen={disableFullScreen}
+        />
+        <StateView
+          title={title}
+          isError={error}
+          isLoading={loading}
+          errorObj={errorObj}
+          isPlaying={isPlaying}
+          loadingObj={loadingObj}
+          themeColor={themeColor}
+          onPressPlay={handlePlay}
+          onPressReload={handleReload}
+        />
+      </PressView>
+    );
+  }
+);
 Player.propTypes = {
   ...ALIViewPlayer.propTypes,
   source: PropTypes.string, // 播放地址
@@ -512,3 +539,5 @@ Player.defaultProps = {
   onCompletion: () => {},
   themeColor: '#F85959',
 };
+
+export default Player;
