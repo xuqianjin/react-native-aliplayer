@@ -58,8 +58,8 @@ RCT_EXPORT_METHOD(restartPlay:(nonnull NSNumber *) reactTag){
 RCT_EXPORT_METHOD(destroyPlay:(nonnull NSNumber *) reactTag){
   [self.aliViewPlayer destroyPlay];
 }
-RCT_EXPORT_METHOD(seekTo:(nonnull NSNumber *) reactTag){
-  [self.aliViewPlayer seekTo:[reactTag intValue]];
+RCT_EXPORT_METHOD(seekTo:(nonnull NSNumber *) reactTag andPosition:(nonnull NSNumber *) positon){
+  [self.aliViewPlayer seekTo: [positon intValue]];
 }
 
 //重写这个方法，返回将要提供给RN使用的视图
