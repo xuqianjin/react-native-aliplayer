@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
   },
   textWhite: {
     color: 'white',
+    fontSize: 18,
   },
   close: {
     marginTop: 5,

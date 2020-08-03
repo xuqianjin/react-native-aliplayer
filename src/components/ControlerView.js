@@ -22,13 +22,16 @@ const styles = StyleSheet.create({
   textTitle: {
     color: 'white',
     flex: 1,
+    fontSize: 16,
   },
   textQuality: {
     color: 'white',
     marginRight: 10,
+    fontSize: 16,
   },
   textTime: {
     color: 'white',
+    fontSize: 16,
   },
   header: {
     flexDirection: 'row',
