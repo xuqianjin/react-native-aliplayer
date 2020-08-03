@@ -29,18 +29,18 @@ public class RNAliplayerView extends SimpleViewManager<AliSurfaceView> {
     private RCTEventEmitter mEventEmitter;
 
     private enum Events {
-        onCompletion("onCompletion"),
-        onError("onError"),
-        onLoadingBegin("onLoadingBegin"),
-        onLoadingProgress("onLoadingProgress"),
-        onLoadingEnd("onLoadingEnd"),
-        onPrepared("onPrepared"),
-        onRenderingStart("onRenderingStart"),
-        onSeekComplete("onSeekComplete"),
-        onCurrentPositionUpdate("onCurrentPositionUpdate"),
-        onBufferedPositionUpdate("onBufferedPositionUpdate"),
-        onAutoPlayStart("onAutoPlayStart"),
-        onLoopingStart("onLoopingStart");
+        onCompletion("onAliCompletion"),
+        onError("onAliError"),
+        onLoadingBegin("onAliLoadingBegin"),
+        onLoadingProgress("onAliLoadingProgress"),
+        onLoadingEnd("onAliLoadingEnd"),
+        onPrepared("onAliPrepared"),
+        onRenderingStart("onAliRenderingStart"),
+        onSeekComplete("onAliSeekComplete"),
+        onCurrentPositionUpdate("onAliCurrentPositionUpdate"),
+        onBufferedPositionUpdate("onAliBufferedPositionUpdate"),
+        onAutoPlayStart("onAliAutoPlayStart"),
+        onLoopingStart("onAliLoopingStart");
 
         private final String mName;
 

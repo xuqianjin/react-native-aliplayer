@@ -150,7 +150,7 @@ const Player = forwardRef(
           source={playSource}
           ref={playerRef}
           style={StyleSheet.absoluteFill}
-          onPrepared={({ nativeEvent }) => {
+          onAliPrepared={({ nativeEvent }) => {
             setTotal(nativeEvent.duration);
             if (isPlaying) {
               playerRef.current.startPlay();
@@ -161,33 +161,32 @@ const Player = forwardRef(
               setCurrent(0);
             }
           }}
-          onLoadingBegin={() => {
+          onAliLoadingBegin={() => {
             setLoading(true);
             setLoadingObj({});
           }}
-          onLoadingProgress={({ nativeEvent }) => {
+          onAliLoadingProgress={({ nativeEvent }) => {
             setLoadingObj(nativeEvent);
           }}
-          onLoadingEnd={() => {
+          onAliLoadingEnd={() => {
             setLoading(false);
             setLoadingObj({});
           }}
-          onRenderingStart={() => {
+          onAliRenderingStart={() => {
             setLoading(false);
             setIsComplate(false);
             setIsPlaying(true);
             setPosterVisible(false);
           }}
-          onCurrentPositionUpdate={({ nativeEvent }) => {
-            console.log(nativeEvent.position);
+          onAliCurrentPositionUpdate={({ nativeEvent }) => {
             setCurrent(nativeEvent.position);
           }}
-          onCompletion={() => {
+          onAliCompletion={() => {
             setIsComplate(true);
             setIsPlaying(false);
             onCompletion();
           }}
-          onError={({ nativeEvent }) => {
+          onAliError={({ nativeEvent }) => {
             setError(true);
             setErrorObj(nativeEvent);
           }}
