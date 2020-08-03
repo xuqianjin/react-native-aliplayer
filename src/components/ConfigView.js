@@ -35,7 +35,7 @@ function CusSwitch({ themeColor, defaultValue, onChange }) {
   return (
     <Switch
       value={visible}
-      thumbColor={themeColor}
+      thumbColor="white"
       trackColor={{
         true: themeColor,
         false: 'white',
