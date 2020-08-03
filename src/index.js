@@ -213,7 +213,6 @@ const Player = forwardRef(
           disableFullScreen={disableFullScreen}
         />
         <StateView
-          title={title}
           isError={error}
           isLoading={loading}
           errorObj={errorObj}
@@ -240,6 +239,7 @@ const Player = forwardRef(
           onChange={(res) => {
             isChangeQuality.current = true;
             changeSource(res.value);
+            setQualityVisible(false);
           }}
           onClose={() => setQualityVisible(false)}
         />

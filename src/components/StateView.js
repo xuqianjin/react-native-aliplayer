@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ActivityIndicator } from 'react-native';
 import { Button } from 'react-native-elements';
 
-import PressView from './PressView';
 import ControlIcon from './ControlIcon';
 
 const styles = StyleSheet.create({
@@ -38,7 +37,6 @@ const styles = StyleSheet.create({
 });
 
 function StateView({
-  title,
   isPlaying,
   isLoading,
   isError,
@@ -55,13 +53,6 @@ function StateView({
     view = (
       <View style={styles.stateViewLoading}>
         <ActivityIndicator size="large" color={themeColor} />
-        {!!title && (
-          <Text
-            style={styles.textLoadingTitle}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-          >{`当前播放:${title}`}</Text>
-        )}
         <Text style={styles.textLoading}>
           <Text>缓冲中...</Text>
           {!!percent && <Text>{`${percent}%`}</Text>}
@@ -73,13 +64,6 @@ function StateView({
     view = (
       <View>
         <ControlIcon onPress={onPressPlay} size={40} name="playcircleo" />
-        {!!title && (
-          <Text
-            style={styles.textLoadingTitle}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-          >{`${title}`}</Text>
-        )}
       </View>
     );
   }

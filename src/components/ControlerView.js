@@ -76,7 +76,7 @@ function ControlerView({
   const totalFormat = formatTime(total);
   const hasQuality = Array.isArray(qualityList) && qualityList.length;
   const quality = qualityList.find((o) => o.value === playSource);
-  const { label: qualityLabel } = quality || { label: '清晰度' };
+  const { label: qualityLabel } = quality || { label: '画质' };
 
   const { animateValue, bottomAnimate, headerAnimate, opacityAnimate } = useMemo(() => {
     const animateValue = new Animated.Value(0);
@@ -140,7 +140,7 @@ function ControlerView({
       >
         {isFull && <ControlIcon onPress={onPressFullOut} name="left" />}
         <Text style={styles.textTitle}>{title}</Text>
-        {Boolean(hasQuality && isFull) && (
+        {hasQuality && isFull && (
           <Text style={styles.textQuality} onPress={onPressQuality}>
             {qualityLabel}
           </Text>

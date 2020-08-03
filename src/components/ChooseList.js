@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
   text: {
     color: 'white',
     marginLeft: 5,
-    paddingHorizontal: 5,
+    paddingHorizontal: 10,
   },
 });
 function ChooseList({ data = [], themeColor, defaultValue, onChange }) {

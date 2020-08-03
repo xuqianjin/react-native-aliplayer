@@ -37,7 +37,7 @@ function QualityView({ visible, qualityList, playSource, themeColor, onClose, on
     <SafeAreaView style={styles.quality}>
       <View style={styles.content} onPress={onClose}>
         <View style={styles.row}>
-          <Text style={styles.textWhite}>清晰度:</Text>
+          <Text style={styles.textWhite}>画质:</Text>
           <ChooseList
             data={qualityList}
             defaultValue={playSource}
