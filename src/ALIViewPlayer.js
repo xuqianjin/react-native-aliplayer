@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { UIManager, findNodeHandle, requireNativeComponent } from 'react-native';
+import { UIManager, findNodeHandle, requireNativeComponent, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 
 export default class ALIViewPlayer extends PureComponent {
