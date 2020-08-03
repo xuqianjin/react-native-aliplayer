@@ -140,7 +140,7 @@ function ControlerView({
       >
         {isFull && <ControlIcon onPress={onPressFullOut} name="left" />}
         <Text style={styles.textTitle}>{title}</Text>
-        {hasQuality && isFull && (
+        {Boolean(hasQuality && isFull) && (
           <Text style={styles.textQuality} onPress={onPressQuality}>
             {qualityLabel}
           </Text>
