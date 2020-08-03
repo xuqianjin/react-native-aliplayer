@@ -11,7 +11,6 @@ import com.aliyun.player.bean.ErrorInfo;
 import com.aliyun.player.bean.InfoBean;
 import com.aliyun.player.bean.InfoCode;
 import com.aliyun.player.nativeclass.PlayerConfig;
-import com.aliyun.player.nativeclass.TrackInfo;
 import com.aliyun.player.source.UrlSource;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
@@ -30,18 +29,18 @@ public class RNAliplayerView extends SimpleViewManager<AliSurfaceView> {
     private RCTEventEmitter mEventEmitter;
 
     private enum Events {
-        onCompletion("onCompletion"),
-        onError("onError"),
-        onLoadingBegin("onLoadingBegin"),
-        onLoadingProgress("onLoadingProgress"),
-        onLoadingEnd("onLoadingEnd"),
-        onPrepared("onPrepared"),
-        onRenderingStart("onRenderingStart"),
-        onSeekComplete("onSeekComplete"),
-        onCurrentPositionUpdate("onCurrentPositionUpdate"),
-        onBufferedPositionUpdate("onBufferedPositionUpdate"),
-        onAutoPlayStart("onAutoPlayStart"),
-        onLoopingStart("onLoopingStart");
+        onCompletion("onAliCompletion"),
+        onError("onAliError"),
+        onLoadingBegin("onAliLoadingBegin"),
+        onLoadingProgress("onAliLoadingProgress"),
+        onLoadingEnd("onAliLoadingEnd"),
+        onPrepared("onAliPrepared"),
+        onRenderingStart("onAliRenderingStart"),
+        onSeekComplete("onAliSeekComplete"),
+        onCurrentPositionUpdate("onAliCurrentPositionUpdate"),
+        onBufferedPositionUpdate("onAliBufferedPositionUpdate"),
+        onAutoPlayStart("onAliAutoPlayStart"),
+        onLoopingStart("onAliLoopingStart");
 
         private final String mName;
 
@@ -238,36 +237,12 @@ public class RNAliplayerView extends SimpleViewManager<AliSurfaceView> {
         view.requestLayout();
     }
 
-
-//    private SurfaceView initView(ThemedReactContext reactContext) {
-//        SurfaceView view = new SurfaceView(reactContext);
-//        view.getHolder().addCallback(new SurfaceHolder.Callback() {
-//            @Override
-//            public void surfaceCreated(SurfaceHolder holder) {
-//                view.aliyunVodPlayer.setDisplay(holder);
-//            }
-//
-//            @Override
-//            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-//                Log.i(TAG, "surfaceChanged: ");
-//                view.aliyunVodPlayer.redraw();
-//            }
-//
-//            @Override
-//            public void surfaceDestroyed(SurfaceHolder holder) {
-//                Log.i(TAG, "surfaceChanged: ");
-//                view.aliyunVodPlayer.setDisplay(null);
-//            }
-//        });
-//        return view;
-//    }
-
     private void initConfig(AliSurfaceView view) {
         view.aliyunVodPlayer.setVideoBackgroundColor(Color.TRANSPARENT);
         view.setBackgroundColor(Color.TRANSPARENT);
     }
 
-    private void initListener(AliSurfaceView view) {
+    private void initListener(final AliSurfaceView view) {
         view.aliyunVodPlayer.setOnInfoListener(new IPlayer.OnInfoListener() {
             @Override
             public void onInfo(InfoBean infoBean) {

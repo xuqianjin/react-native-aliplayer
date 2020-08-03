@@ -1,327 +1,29 @@
-import React, {
-  forwardRef,
-  useRef,
-  useState,
-  useEffect,
-  useMemo,
-  useImperativeHandle,
-} from 'react';
-import {
-  View,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  StatusBar,
-  Animated,
-  Easing,
-  Image,
-  SafeAreaView,
-} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import { StyleSheet, StatusBar, Image, View } from 'react-native';
 import PropTypes from 'prop-types';
-import { Icon, Slider, Button } from 'react-native-elements';
 import { useBackHandler, useAppState, useDimensions } from '@react-native-community/hooks';
 
 import ALIViewPlayer from './ALIViewPlayer';
-import useTimeout from './useTimeout';
-import useUpdateEffect from './useUpdateEffect';
-
-const GradientWhite = 'rgba(0,0,0,0)';
-const GradientBlack = 'rgba(0,0,0,0.3)';
-const controlerHeight = 40;
-
-const AnimateLinearGradient = Animated.createAnimatedComponent(LinearGradient);
+import ControlerView from './components/ControlerView';
+import StateView from './components/StateView';
+import ConfigView from './components/ConfigView';
+import QualityView from './components/QualityView';
 
 const styles = StyleSheet.create({
   base: {
     overflow: 'hidden',
     backgroundColor: 'black',
   },
-  controler: {
-    ...StyleSheet.absoluteFill,
-    justifyContent: 'space-between',
-  },
-  stateview: {
-    ...StyleSheet.absoluteFill,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  textTitle: {
-    color: 'white',
-  },
-  textTime: {
-    color: 'white',
-  },
-  stateViewLoading: {
-    maxWidth: '50%',
-  },
-  stateViewError: {
-    width: 200,
-    alignItems: 'center',
-  },
-  textError: {
-    color: 'white',
-    alignSelf: 'center',
-    fontSize: 14,
-    marginBottom: 10,
-  },
-  textLoading: {
-    color: 'white',
-    alignSelf: 'center',
-    fontSize: 12,
-  },
-  textLoadingTitle: {
-    fontSize: 12,
-    color: 'white',
-    alignSelf: 'center',
-    marginTop: 10,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: controlerHeight,
-    width: '100%',
-    paddingHorizontal: 10,
-  },
-  bottom: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: controlerHeight,
-    width: '100%',
-    paddingHorizontal: 10,
-    justifyContent: 'space-between',
-  },
-  bottomSlide: {
-    flex: 0.8,
-    marginHorizontal: 5,
-  },
-  retryButton: {
-    width: 100,
-    height: 50,
-  },
-  progressView: {
-    width: '100%',
-    height: 2,
-    position: 'absolute',
-    bottom: 0,
-  },
-  progressValue: {
-    height: '100%',
-  },
 });
 
-const formatTime = (time) => {
-  const S = ('00' + (time % 60)).slice(-2);
-  const M = ('00' + parseInt(time / 60)).slice(-2);
-  return { M, S };
-};
-
-function PressView({ children, ...props }) {
-  return (
-    <TouchableOpacity activeOpacity={0.8} {...props}>
-      {children}
-    </TouchableOpacity>
-  );
-}
-
-function ContorIcon({ ...props }) {
-  return <Icon type="antdesign" color="white" size={20} {...props} />;
-}
-
-function Progress({ disable, value, maxValue, themeColor }) {
-  if (disable) {
-    return null;
-  }
-  const progress = `${maxValue ? Math.floor((value * 100) / maxValue) : 0}%`;
-  return (
-    <View style={styles.progressView}>
-      <View style={[styles.progressValue, { width: progress, backgroundColor: themeColor }]}></View>
-    </View>
-  );
-}
-
-function StateView({
-  title,
-  isPlaying,
-  isLoading,
-  isError,
-  loadingObj = {},
-  errorObj = {},
-  onPressPlay,
-  onPressReload,
-  themeColor,
-}) {
-  const { percent } = loadingObj;
-  const { message } = errorObj;
-  let view = null;
-  if (isLoading) {
-    view = (
-      <View style={styles.stateViewLoading}>
-        <ActivityIndicator size="large" color={themeColor} />
-        {!!title && (
-          <Text
-            style={styles.textLoadingTitle}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-          >{`当前播放:${title}`}</Text>
-        )}
-        <Text style={styles.textLoading}>
-          <Text>缓冲中...</Text>
-          {!!percent && <Text>{`${percent}%`}</Text>}
-        </Text>
-      </View>
-    );
-  }
-  if (!isPlaying) {
-    view = (
-      <PressView onPress={onPressPlay}>
-        <ContorIcon size={40} name="playcircleo" />
-        {!!title && (
-          <Text
-            style={styles.textLoadingTitle}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-          >{`${title}`}</Text>
-        )}
-      </PressView>
-    );
-  }
-  if (isError) {
-    view = (
-      <View style={styles.stateViewError}>
-        <Text
-          style={styles.textError}
-          numberOfLines={1}
-          ellipsizeMode="tail"
-        >{`播放出错:${message}`}</Text>
-        <Button
-          title="重试"
-          titleStyle={{ fontSize: 12 }}
-          buttonStyle={{ width: 80, height: 30, backgroundColor: themeColor }}
-          onPress={onPressReload}
-        />
-      </View>
-    );
-  }
-  return (
-    <View style={styles.stateview} pointerEvents="box-none">
-      {view}
-    </View>
-  );
-}
-
-function ControlerView({
-  title = '',
-  visible = true,
-  isFull = false,
-  current = 0,
-  total = 0,
-  isPlaying = false,
-  disableFullScreen = false,
-  onPressPlay,
-  onPressPause,
-  onPressFullIn,
-  onPressFullOut,
-  onSlide,
-  themeColor,
-}) {
-  const [value, setValue] = useState(current);
-  const isSliding = useRef(false);
-  const valueFormat = formatTime(value);
-  const totalFormat = formatTime(total);
-  const { animateValue, bottomAnimate, headerAnimate } = useMemo(() => {
-    const animateValue = new Animated.Value(0);
-    const bottomAnimate = animateValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: [controlerHeight * 2, 0],
-    });
-    const headerAnimate = animateValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: [-controlerHeight * 2, 0],
-    });
-    return {
-      animateValue,
-      bottomAnimate,
-      headerAnimate,
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isSliding.current) {
-      setValue(current);
-    }
-  }, [current]);
-
-  useEffect(() => {
-    Animated.timing(animateValue, {
-      toValue: visible ? 1 : 0,
-      duration: 300,
-      easing: Easing.linear,
-      useNativeDriver: true,
-    }).start();
-  }, [visible, animateValue]);
-
-  return (
-    <SafeAreaView style={styles.controler}>
-      <AnimateLinearGradient
-        colors={[GradientBlack, GradientWhite]}
-        style={[styles.header, { transform: [{ translateY: headerAnimate }] }]}
-      >
-        {isFull && (
-          <PressView onPress={onPressFullOut}>
-            <ContorIcon name="left" />
-          </PressView>
-        )}
-        <Text style={styles.textTitle}>{title}</Text>
-      </AnimateLinearGradient>
-      <AnimateLinearGradient
-        colors={[GradientWhite, GradientBlack]}
-        style={[styles.bottom, { transform: [{ translateY: bottomAnimate }] }]}
-      >
-        <PressView onPress={isPlaying ? onPressPause : onPressPlay}>
-          <ContorIcon name={isPlaying ? 'pausecircleo' : 'playcircleo'} />
-        </PressView>
-        <Text style={styles.textTime}>{`${valueFormat.M}:${valueFormat.S}`}</Text>
-        <Slider
-          step={1}
-          value={value}
-          minimumValue={0}
-          maximumValue={total}
-          style={styles.bottomSlide}
-          minimumTrackTintColor={themeColor}
-          thumbTintColor="white"
-          maximumTrackTintColor="white"
-          trackStyle={{ height: 2 }}
-          thumbStyle={{ height: 10, width: 10 }}
-          onSlidingStart={() => {
-            isSliding.current = true;
-          }}
-          onSlidingComplete={() => {
-            isSliding.current = false;
-            onSlide(value);
-          }}
-          onValueChange={(data) => {
-            setValue(data);
-          }}
-        />
-        <Text style={styles.textTime}>{`${totalFormat.M}:${totalFormat.S}`}</Text>
-        {!disableFullScreen && (
-          <PressView onPress={isFull ? onPressFullOut : onPressFullIn}>
-            <ContorIcon name={isFull ? 'shrink' : 'arrowsalt'} />
-          </PressView>
-        )}
-      </AnimateLinearGradient>
-      <Progress disable={visible} value={value} maxValue={total} themeColor={themeColor} />
-    </SafeAreaView>
-  );
-}
+const defaultConfig = { enableHardwareDecoder: true, setSpeed: 1.0, setScaleMode: 0 };
 
 const Player = forwardRef(
   (
     {
       title,
       source,
+      qualityList,
       poster,
       style,
       themeColor,
@@ -333,19 +35,24 @@ const Player = forwardRef(
     ref
   ) => {
     const playerRef = useRef();
+    const [playSource, setPlaySource] = useState(source);
+    const [configVisible, setConfigVisible] = useState(false);
+    const [qualityVisible, setQualityVisible] = useState(false);
     const [error, setError] = useState(false);
     const [errorObj, setErrorObj] = useState({});
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [isFull, setIsFull] = useState(false);
     const [isComplate, setIsComplate] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
     const [loadingObj, setLoadingObj] = useState({});
-    const [controlerVisible, setControlerVisible] = useState(false);
+    const [configObj, setConfigObj] = useState(defaultConfig);
     const [total, setTotal] = useState(0);
     const [current, setCurrent] = useState(0);
     const [posterVisible, setPosterVisible] = useState(Boolean(poster));
     const window = useDimensions().window;
     const currentAppState = useAppState();
+    const isChangeQuality = useRef(false);
+
     useImperativeHandle(ref, () => ({
       play: (play) => {
         if (play) {
@@ -362,20 +69,12 @@ const Player = forwardRef(
         }
       },
     }));
-    const [_, clear, set] = useTimeout(() => {
-      setControlerVisible(false);
-    }, 5000);
 
     // 处理切换资源
-    useUpdateEffect(() => {
-      if (!source || !isPlaying) {
-        return;
+    useEffect(() => {
+      if (source) {
+        changeSource(source);
       }
-      setLoading(true);
-      setLoadingObj({});
-      setError(false);
-      setIsPlaying(true);
-      playerRef.current.startPlay();
     }, [source]);
 
     useEffect(() => {
@@ -392,6 +91,13 @@ const Player = forwardRef(
       }
       return false;
     });
+
+    const changeSource = (src) => {
+      setPlaySource(src);
+      setLoading(true);
+      setLoadingObj({});
+      setError(false);
+    };
 
     const handlePlay = () => {
       if (isComplate) {
@@ -426,16 +132,6 @@ const Player = forwardRef(
       setIsFull(false);
     };
 
-    const handlePressPlayer = () => {
-      if (controlerVisible) {
-        setControlerVisible(false);
-        clear();
-      } else {
-        setControlerVisible(true);
-        set();
-      }
-    };
-
     const fullscreenStyle = {
       position: 'absolute',
       top: 0,
@@ -446,47 +142,51 @@ const Player = forwardRef(
     };
 
     return (
-      <PressView
-        activeOpacity={1}
-        onPress={handlePressPlayer}
-        style={[styles.base, isFull ? fullscreenStyle : style]}
-      >
+      <View style={[styles.base, isFull ? fullscreenStyle : style]}>
         <StatusBar hidden={isFull} />
         <ALIViewPlayer
+          {...configObj}
           {...restProps}
-          source={source}
+          source={playSource}
           ref={playerRef}
           style={StyleSheet.absoluteFill}
-          onPrepared={({ nativeEvent }) => {
-            setCurrent(0);
+          onAliPrepared={({ nativeEvent }) => {
             setTotal(nativeEvent.duration);
+            if (isPlaying) {
+              playerRef.current.startPlay();
+            }
+            if (isChangeQuality.current) {
+              playerRef.current.seekTo(current);
+            } else {
+              setCurrent(0);
+            }
           }}
-          onLoadingBegin={() => {
+          onAliLoadingBegin={() => {
             setLoading(true);
             setLoadingObj({});
           }}
-          onLoadingProgress={({ nativeEvent }) => {
+          onAliLoadingProgress={({ nativeEvent }) => {
             setLoadingObj(nativeEvent);
           }}
-          onLoadingEnd={() => {
+          onAliLoadingEnd={() => {
             setLoading(false);
             setLoadingObj({});
           }}
-          onRenderingStart={() => {
+          onAliRenderingStart={() => {
             setLoading(false);
             setIsComplate(false);
             setIsPlaying(true);
             setPosterVisible(false);
           }}
-          onCurrentPositionUpdate={({ nativeEvent }) => {
+          onAliCurrentPositionUpdate={({ nativeEvent }) => {
             setCurrent(nativeEvent.position);
           }}
-          onCompletion={() => {
+          onAliCompletion={() => {
             setIsComplate(true);
             setIsPlaying(false);
             onCompletion();
           }}
-          onError={({ nativeEvent }) => {
+          onAliError={({ nativeEvent }) => {
             setError(true);
             setErrorObj(nativeEvent);
           }}
@@ -497,16 +197,19 @@ const Player = forwardRef(
         <ControlerView
           title={title}
           isFull={isFull}
-          visible={controlerVisible}
           current={current}
           total={total}
           onSlide={handleSlide}
           isPlaying={isPlaying}
+          playSource={playSource}
           themeColor={themeColor}
           onPressPlay={handlePlay}
+          qualityList={qualityList}
           onPressPause={handlePause}
           onPressFullIn={handleFullScreenIn}
           onPressFullOut={handleFullScreenOut}
+          onPressConfig={() => setConfigVisible(true)}
+          onPressQuality={() => setQualityVisible(true)}
           disableFullScreen={disableFullScreen}
         />
         <StateView
@@ -520,13 +223,39 @@ const Player = forwardRef(
           onPressPlay={handlePlay}
           onPressReload={handleReload}
         />
-      </PressView>
+        <ConfigView
+          config={configObj}
+          visible={configVisible}
+          themeColor={themeColor}
+          onClose={() => setConfigVisible(false)}
+          onChange={(res) => {
+            setConfigObj((o) => ({ ...o, ...res }));
+          }}
+        />
+        <QualityView
+          themeColor={themeColor}
+          playSource={playSource}
+          visible={qualityVisible}
+          qualityList={qualityList}
+          onChange={(res) => {
+            isChangeQuality.current = true;
+            changeSource(res.value);
+          }}
+          onClose={() => setQualityVisible(false)}
+        />
+      </View>
     );
   }
 );
 Player.propTypes = {
   ...ALIViewPlayer.propTypes,
   source: PropTypes.string, // 播放地址
+  qualityList: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string, // 标清 高清
+      value: PropTypes.string, // 对应播放地址
+    }) // 播放列表
+  ),
   poster: Image.propTypes.source, // 封面图
   onFullScreen: PropTypes.func, // 全屏回调事件
   onCompletion: PropTypes.func, // 播放完成事件

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { UIManager, findNodeHandle, requireNativeComponent } from 'react-native';
+import { UIManager, findNodeHandle, requireNativeComponent, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 
 export default class ALIViewPlayer extends PureComponent {
@@ -81,18 +81,18 @@ ALIViewPlayer.propTypes = {
   setRotateMode: PropTypes.oneOf([0, 1, 2, 3]), // 设置旋转 0:0度;1:90度;2:180度;3:270度;
   setScaleMode: PropTypes.oneOf([0, 1, 2]), // 设置画面缩放模式 0:宽高比适应;1:宽高比填充;2:拉伸填充;
 
-  onCompletion: PropTypes.func, // 播放完成事件
-  onError: PropTypes.func, // 出错事件
-  onLoadingBegin: PropTypes.func, // 缓冲开始。
-  onLoadingProgress: PropTypes.func, // 缓冲进度
-  onLoadingEnd: PropTypes.func, // 缓冲结束
-  onPrepared: PropTypes.func, // 准备成功事件
-  onRenderingStart: PropTypes.func, // 首帧渲染显示事件
-  onSeekComplete: PropTypes.func, // 拖动结束
-  onCurrentPositionUpdate: PropTypes.func, // 播放进度
-  onBufferedPositionUpdate: PropTypes.func, // 缓冲进度
-  onAutoPlayStart: PropTypes.func, // 自动播放开始
-  onLoopingStart: PropTypes.func, // 循环播放开始
+  onAliCompletion: PropTypes.func, // 播放完成事件
+  onAliError: PropTypes.func, // 出错事件
+  onAliLoadingBegin: PropTypes.func, // 缓冲开始。
+  onAliLoadingProgress: PropTypes.func, // 缓冲进度
+  onAliLoadingEnd: PropTypes.func, // 缓冲结束
+  onAliPrepared: PropTypes.func, // 准备成功事件
+  onAliRenderingStart: PropTypes.func, // 首帧渲染显示事件
+  onAliSeekComplete: PropTypes.func, // 拖动结束
+  onAliCurrentPositionUpdate: PropTypes.func, // 播放进度
+  onAliBufferedPositionUpdate: PropTypes.func, // 缓冲进度
+  onAliAutoPlayStart: PropTypes.func, // 自动播放开始
+  onAliLoopingStart: PropTypes.func, // 循环播放开始
 };
 
 ALIViewPlayer.defaultProps = {
