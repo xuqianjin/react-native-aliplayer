@@ -7,6 +7,7 @@
 //
 
 #import "RNAliplayerManager.h"
+#import <React/RCTUIManager.h>
 
 @implementation RNAliplayerManager
 
@@ -41,32 +42,52 @@ RCT_EXPORT_VIEW_PROPERTY(onLoopingStart, RCTBubblingEventBlock)
 
 //暴露方法（js调用，原生回调）
 RCT_EXPORT_METHOD(startPlay:(nonnull NSNumber *) reactTag){
-  [self.aliViewPlayer startPlay];
+    [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
+        RNAliplayer * aliPlayer  = (RNAliplayer *) viewRegistry[reactTag];
+        [aliPlayer startPlay];
+    }];
 }
 RCT_EXPORT_METHOD(pausePlay:(nonnull NSNumber *) reactTag){
-  [self.aliViewPlayer pausePlay];
+    [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
+        RNAliplayer * aliPlayer  = (RNAliplayer *) viewRegistry[reactTag];
+        [aliPlayer pausePlay];
+    }];
 }
 RCT_EXPORT_METHOD(stopPlay:(nonnull NSNumber *) reactTag){
-  [self.aliViewPlayer stopPlay];
+    [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
+         RNAliplayer * aliPlayer  = (RNAliplayer *) viewRegistry[reactTag];
+         [aliPlayer stopPlay];
+     }];
 }
 RCT_EXPORT_METHOD(reloadPlay:(nonnull NSNumber *) reactTag){
-  [self.aliViewPlayer reloadPlay];
+    [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
+         RNAliplayer * aliPlayer  = (RNAliplayer *) viewRegistry[reactTag];
+         [aliPlayer reloadPlay];
+     }];
 }
 RCT_EXPORT_METHOD(restartPlay:(nonnull NSNumber *) reactTag){
-  [self.aliViewPlayer restartPlay];
+    [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
+         RNAliplayer * aliPlayer  = (RNAliplayer *) viewRegistry[reactTag];
+         [aliPlayer restartPlay];
+     }];
 }
 RCT_EXPORT_METHOD(destroyPlay:(nonnull NSNumber *) reactTag){
-  [self.aliViewPlayer destroyPlay];
+    [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
+         RNAliplayer * aliPlayer  = (RNAliplayer *) viewRegistry[reactTag];
+         [aliPlayer destroyPlay];
+     }];
 }
 RCT_EXPORT_METHOD(seekTo:(nonnull NSNumber *) reactTag andPosition:(nonnull NSNumber *) positon){
-  [self.aliViewPlayer seekTo: [positon intValue]];
+    [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
+         RNAliplayer * aliPlayer  = (RNAliplayer *) viewRegistry[reactTag];
+         [aliPlayer seekTo: [positon intValue]];
+     }];
 }
 
 //重写这个方法，返回将要提供给RN使用的视图
 - (UIView *)view {
-  RNAliplayer * aliPlayer = [[RNAliplayer alloc] init];
-  self.aliViewPlayer = aliPlayer;
-  return aliPlayer;
+    RNAliplayer * aliPlayer = [[RNAliplayer alloc] init];
+    return aliPlayer;
 }
 
 
