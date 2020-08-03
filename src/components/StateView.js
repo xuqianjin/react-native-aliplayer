@@ -100,7 +100,11 @@ function StateView({
       </View>
     );
   }
-  return <SafeAreaView style={styles.stateview}>{view}</SafeAreaView>;
+  return (
+    <SafeAreaView style={styles.stateview} pointerEvents="box-none">
+      {view}
+    </SafeAreaView>
+  );
 }
 
 export default StateView;

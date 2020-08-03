@@ -43,6 +43,7 @@ function CusSwitch({ themeColor, defaultValue, onChange }) {
         setVisible(value);
         onChange(value);
       }}
+      style={{ marginLeft: 10 }}
     />
   );
 }
