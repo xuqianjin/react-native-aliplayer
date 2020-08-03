@@ -32,18 +32,18 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,assign) int  setScaleMode;
 
 //定义要暴露的事件
-@property (nonatomic, copy) RCTBubblingEventBlock onCompletion;
-@property (nonatomic, copy) RCTBubblingEventBlock onError;
-@property (nonatomic, copy) RCTBubblingEventBlock onLoadingBegin;
-@property (nonatomic, copy) RCTBubblingEventBlock onLoadingProgress;
-@property (nonatomic, copy) RCTBubblingEventBlock onLoadingEnd;
-@property (nonatomic, copy) RCTBubblingEventBlock onPrepared;
-@property (nonatomic, copy) RCTBubblingEventBlock onRenderingStart;
-@property (nonatomic, copy) RCTBubblingEventBlock onSeekComplete;
-@property (nonatomic, copy) RCTBubblingEventBlock onCurrentPositionUpdate;
-@property (nonatomic, copy) RCTBubblingEventBlock onBufferedPositionUpdate;
-@property (nonatomic, copy) RCTBubblingEventBlock onAutoPlayStart;
-@property (nonatomic, copy) RCTBubblingEventBlock onLoopingStart;
+@property (nonatomic, copy) RCTBubblingEventBlock onAliCompletion;
+@property (nonatomic, copy) RCTBubblingEventBlock onAliError;
+@property (nonatomic, copy) RCTBubblingEventBlock onAliLoadingBegin;
+@property (nonatomic, copy) RCTBubblingEventBlock onAliLoadingProgress;
+@property (nonatomic, copy) RCTBubblingEventBlock onAliLoadingEnd;
+@property (nonatomic, copy) RCTBubblingEventBlock onAliPrepared;
+@property (nonatomic, copy) RCTBubblingEventBlock onAliRenderingStart;
+@property (nonatomic, copy) RCTBubblingEventBlock onAliSeekComplete;
+@property (nonatomic, copy) RCTBubblingEventBlock onAliCurrentPositionUpdate;
+@property (nonatomic, copy) RCTBubblingEventBlock onAliBufferedPositionUpdate;
+@property (nonatomic, copy) RCTBubblingEventBlock onAliAutoPlayStart;
+@property (nonatomic, copy) RCTBubblingEventBlock onAliLoopingStart;
 
 
 -(void)startPlay;

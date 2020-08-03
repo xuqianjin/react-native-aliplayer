@@ -151,7 +151,7 @@
  */
 - (void)onError:(AliPlayer*)player errorModel:(AVPErrorModel *)errorModel {
   //提示错误，及stop播放
-  self.onError(@{@"code":@(errorModel.code),@"message":errorModel.message});
+  self.onAliError(@{@"code":@(errorModel.code),@"message":errorModel.message});
   
 }
 /**
@@ -163,50 +163,50 @@
   switch (eventType) {
     case AVPEventPrepareDone:
       // 准备完成
-      if (self.onPrepared) {
-         self.onPrepared(@{@"duration":@(player.duration/1000)});
+      if (self.onAliPrepared) {
+         self.onAliPrepared(@{@"duration":@(player.duration/1000)});
       }
       break;
     case AVPEventAutoPlayStart:
       // 自动播放开始事件
-      if (self.onAutoPlayStart) {
-         self.onAutoPlayStart(@{@"code":@"onAutoPlayStart"});
+      if (self.onAliAutoPlayStart) {
+         self.onAliAutoPlayStart(@{@"code":@"onAliAutoPlayStart"});
       }
       break;
     case AVPEventFirstRenderedStart:
       // 首帧显示
-      if (self.onRenderingStart) {
-        self.onRenderingStart(@{@"code":@"onRenderingStart"});
+      if (self.onAliRenderingStart) {
+        self.onAliRenderingStart(@{@"code":@"onRenderingStart"});
       }
       break;
     case AVPEventCompletion:
       // 播放完成
-      if (self.onCompletion) {
-        self.onCompletion(@{@"code":@"onCompletion"});
+      if (self.onAliCompletion) {
+        self.onAliCompletion(@{@"code":@"onAliCompletion"});
       }
       break;
     case AVPEventLoadingStart:
       // 缓冲开始
-      if (self.onLoadingBegin) {
-        self.onLoadingBegin(@{@"code":@"onLoadingBegin"});
+      if (self.onAliLoadingBegin) {
+        self.onAliLoadingBegin(@{@"code":@"onAliLoadingBegin"});
       }
       break;
     case AVPEventLoadingEnd:
       // 缓冲完成
-      if (self.onLoadingEnd) {
-        self.onLoadingEnd(@{@"code":@"onLoadingEnd"});
+      if (self.onAliLoadingEnd) {
+        self.onAliLoadingEnd(@{@"code":@"onAliLoadingEnd"});
       }
       break;
     case AVPEventSeekEnd:
       // 跳转完成
-      if (self.onSeekComplete) {
-        self.onSeekComplete(@{@"code":@"onSeekComplete"});
+      if (self.onAliSeekComplete) {
+        self.onAliSeekComplete(@{@"code":@"onAliSeekComplete"});
       }
       break;
     case AVPEventLoopingStart:
       // 循环播放开始
-      if (self.onLoopingStart) {
-        self.onLoopingStart(@{@"code":@"onLoopingStart"});
+      if (self.onAliLoopingStart) {
+        self.onAliLoopingStart(@{@"code":@"onAliLoopingStart"});
       }
       break;
     default:
@@ -219,8 +219,8 @@
  @param position 视频当前播放位置
  */
 - (void)onCurrentPositionUpdate:(AliPlayer*)player position:(int64_t)position {
-  if (self.onCurrentPositionUpdate) {
-     self.onCurrentPositionUpdate(@{@"position":@(position/1000)});
+  if (self.onAliCurrentPositionUpdate) {
+     self.onAliCurrentPositionUpdate(@{@"position":@(position/1000)});
   }
 }
 /**
@@ -229,8 +229,8 @@
  @param position 视频当前缓存位置
  */
 - (void)onBufferedPositionUpdate:(AliPlayer*)player position:(int64_t)position {
-  if (self.onBufferedPositionUpdate) {
-    self.onBufferedPositionUpdate(@{@"position":@(position/1000)});
+  if (self.onAliBufferedPositionUpdate) {
+    self.onAliBufferedPositionUpdate(@{@"position":@(position/1000)});
   }
 }
 
@@ -245,8 +245,8 @@
  @param progress Buffer progress: from 0 to 100.
  */
 - (void)onLoadingProgress:(AliPlayer*)player progress:(float)progress{
-  if (self.onLoadingProgress) {
-    self.onLoadingProgress(@{@"percent":@(progress)});
+  if (self.onAliLoadingProgress) {
+    self.onAliLoadingProgress(@{@"percent":@(progress)});
   }
 }
 

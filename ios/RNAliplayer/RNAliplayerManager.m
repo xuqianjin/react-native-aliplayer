@@ -7,7 +7,6 @@
 //
 
 #import "RNAliplayerManager.h"
-#import <React/RCTUIManager.h>
 
 @implementation RNAliplayerManager
 
@@ -27,18 +26,18 @@ RCT_EXPORT_VIEW_PROPERTY(setRotateMode, int)
 RCT_EXPORT_VIEW_PROPERTY(setScaleMode, int)
 
 //暴露方法（原生调用，js回调）
-RCT_EXPORT_VIEW_PROPERTY(onCompletion, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onError, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onLoadingBegin, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onLoadingProgress, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onLoadingEnd, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onPrepared, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onRenderingStart, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onSeekComplete, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onCurrentPositionUpdate, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onBufferedPositionUpdate, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onAutoPlayStart, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onLoopingStart, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onAliCompletion, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onAliError, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onAliLoadingBegin, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onAliLoadingProgress, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onAliLoadingEnd, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onAliPrepared, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onAliRenderingStart, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onAliSeekComplete, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onAliCurrentPositionUpdate, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onAliBufferedPositionUpdate, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onAliAutoPlayStart, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onAliLoopingStart, RCTBubblingEventBlock)
 
 //暴露方法（js调用，原生回调）
 RCT_EXPORT_METHOD(startPlay:(nonnull NSNumber *) reactTag){
