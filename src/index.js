@@ -86,7 +86,7 @@ const Player = forwardRef(
 
     useBackHandler(() => {
       if (isFull) {
-        setIsFull(false);
+        handleFullScreenOut();
         return true;
       }
       return false;
