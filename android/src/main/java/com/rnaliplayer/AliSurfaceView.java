@@ -1,4 +1,4 @@
-package com.reactlibrary;
+package com.rnaliplayer;
 
 import android.content.Context;
 import android.util.Log;
