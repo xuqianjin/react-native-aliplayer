@@ -5,7 +5,6 @@ import { useBackHandler, useAppState, useDimensions } from '@react-native-commun
 
 import ALIViewPlayer from './ALIViewPlayer';
 import ControlerView from './components/ControlerView';
-import StateView from './components/StateView';
 import ConfigView from './components/ConfigView';
 import QualityView from './components/QualityView';
 
@@ -199,20 +198,6 @@ const Player = forwardRef(
           isFull={isFull}
           current={current}
           total={total}
-          onSlide={handleSlide}
-          isPlaying={isPlaying}
-          playSource={playSource}
-          themeColor={themeColor}
-          onPressPlay={handlePlay}
-          qualityList={qualityList}
-          onPressPause={handlePause}
-          onPressFullIn={handleFullScreenIn}
-          onPressFullOut={handleFullScreenOut}
-          onPressConfig={() => setConfigVisible(true)}
-          onPressQuality={() => setQualityVisible(true)}
-          disableFullScreen={disableFullScreen}
-        />
-        <StateView
           isError={error}
           isLoading={loading}
           errorObj={errorObj}
@@ -221,6 +206,15 @@ const Player = forwardRef(
           themeColor={themeColor}
           onPressPlay={handlePlay}
           onPressReload={handleReload}
+          onSlide={handleSlide}
+          playSource={playSource}
+          qualityList={qualityList}
+          onPressPause={handlePause}
+          onPressFullIn={handleFullScreenIn}
+          onPressFullOut={handleFullScreenOut}
+          onPressConfig={() => setConfigVisible(true)}
+          onPressQuality={() => setQualityVisible(true)}
+          disableFullScreen={disableFullScreen}
         />
         <ConfigView
           config={configObj}

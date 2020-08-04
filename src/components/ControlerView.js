@@ -6,6 +6,7 @@ import { Slider } from 'react-native-elements';
 import { formatTime } from '../lib/utils';
 import PressView from './PressView';
 import ControlIcon from './ControlIcon';
+import StateView from './StateView';
 import Progress from './Progress';
 import useTimeout from '../lib/useTimeout';
 
@@ -18,6 +19,11 @@ const AnimateLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 const styles = StyleSheet.create({
   controler: {
     ...StyleSheet.absoluteFill,
+  },
+  stateview: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   textTitle: {
     color: 'white',
@@ -63,8 +69,14 @@ function ControlerView({
   disableFullScreen = false,
   playSource,
   qualityList = [],
+
+  isError,
+  isLoading,
+  errorObj,
+  loadingObj,
   onPressPlay,
   onPressPause,
+  onPressReload,
   onPressFullIn,
   onPressFullOut,
   onPressConfig,
@@ -150,7 +162,18 @@ function ControlerView({
         )}
         {isFull && <ControlIcon name="setting" onPress={onPressConfig} />}
       </AnimateLinearGradient>
-      <PressView style={{ flex: 1 }} onPress={handlePressPlayer}></PressView>
+      <PressView style={styles.stateview} onPress={handlePressPlayer} activeOpacity={1}>
+        <StateView
+          isError={isError}
+          isLoading={isLoading}
+          errorObj={errorObj}
+          isPlaying={isPlaying}
+          loadingObj={loadingObj}
+          themeColor={themeColor}
+          onPressPlay={onPressPlay}
+          onPressReload={onPressReload}
+        />
+      </PressView>
       <AnimateLinearGradient
         colors={[GradientWhite, GradientBlack]}
         style={[

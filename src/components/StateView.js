@@ -5,11 +5,6 @@ import { Button } from 'react-native-elements';
 import ControlIcon from './ControlIcon';
 
 const styles = StyleSheet.create({
-  stateview: {
-    ...StyleSheet.absoluteFill,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   stateViewLoading: {
     maxWidth: '50%',
   },
@@ -84,11 +79,7 @@ function StateView({
       </View>
     );
   }
-  return (
-    <SafeAreaView style={styles.stateview} pointerEvents="box-none">
-      {view}
-    </SafeAreaView>
-  );
+  return view;
 }
 
 export default StateView;
