@@ -5,8 +5,6 @@ import { useBackHandler, useAppState, useDimensions } from '@react-native-commun
 
 import ALIViewPlayer from './ALIViewPlayer';
 import ControlerView from './components/ControlerView';
-import ConfigView from './components/ConfigView';
-import QualityView from './components/QualityView';
 
 const styles = StyleSheet.create({
   base: {
@@ -14,8 +12,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
   },
 });
-
-const defaultConfig = { enableHardwareDecoder: true, setSpeed: 1.0, setScaleMode: 0 };
 
 const Player = forwardRef(
   (
@@ -35,8 +31,6 @@ const Player = forwardRef(
   ) => {
     const playerRef = useRef();
     const [playSource, setPlaySource] = useState(source);
-    const [configVisible, setConfigVisible] = useState(false);
-    const [qualityVisible, setQualityVisible] = useState(false);
     const [error, setError] = useState(false);
     const [errorObj, setErrorObj] = useState({});
     const [loading, setLoading] = useState(true);
@@ -44,7 +38,6 @@ const Player = forwardRef(
     const [isComplate, setIsComplate] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
     const [loadingObj, setLoadingObj] = useState({});
-    const [configObj, setConfigObj] = useState(defaultConfig);
     const [total, setTotal] = useState(0);
     const [current, setCurrent] = useState(0);
     const [posterVisible, setPosterVisible] = useState(Boolean(poster));
@@ -72,6 +65,7 @@ const Player = forwardRef(
     // 处理切换资源
     useEffect(() => {
       if (source) {
+        isChangeQuality.current = false;
         changeSource(source);
       }
     }, [source]);
@@ -131,6 +125,15 @@ const Player = forwardRef(
       setIsFull(false);
     };
 
+    const handleChangeConfig = (config) => {
+      playerRef.current.setNativeProps(config);
+    };
+
+    const handleChangeQuality = (newSource) => {
+      isChangeQuality.current = true;
+      changeSource(newSource);
+    };
+
     const fullscreenStyle = {
       position: 'absolute',
       top: 0,
@@ -144,7 +147,6 @@ const Player = forwardRef(
       <View style={[styles.base, isFull ? fullscreenStyle : style]}>
         <StatusBar hidden={isFull} />
         <ALIViewPlayer
-          {...configObj}
           {...restProps}
           source={playSource}
           ref={playerRef}
@@ -204,38 +206,17 @@ const Player = forwardRef(
           isPlaying={isPlaying}
           loadingObj={loadingObj}
           themeColor={themeColor}
-          onPressPlay={handlePlay}
-          onPressReload={handleReload}
-          onSlide={handleSlide}
           playSource={playSource}
           qualityList={qualityList}
+          onSlide={handleSlide}
+          onPressPlay={handlePlay}
           onPressPause={handlePause}
+          onPressReload={handleReload}
           onPressFullIn={handleFullScreenIn}
           onPressFullOut={handleFullScreenOut}
-          onPressConfig={() => setConfigVisible(true)}
-          onPressQuality={() => setQualityVisible(true)}
+          onChangeConfig={handleChangeConfig}
+          onChangeQuality={handleChangeQuality}
           disableFullScreen={disableFullScreen}
-        />
-        <ConfigView
-          config={configObj}
-          visible={configVisible}
-          themeColor={themeColor}
-          onClose={() => setConfigVisible(false)}
-          onChange={(res) => {
-            setConfigObj((o) => ({ ...o, ...res }));
-          }}
-        />
-        <QualityView
-          themeColor={themeColor}
-          playSource={playSource}
-          visible={qualityVisible}
-          qualityList={qualityList}
-          onChange={(res) => {
-            isChangeQuality.current = true;
-            changeSource(res.value);
-            setQualityVisible(false);
-          }}
-          onClose={() => setQualityVisible(false)}
         />
       </View>
     );

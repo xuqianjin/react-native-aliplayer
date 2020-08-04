@@ -4,11 +4,13 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Slider } from 'react-native-elements';
 
 import { formatTime } from '../lib/utils';
+import useTimeout from '../lib/useTimeout';
 import PressView from './PressView';
 import ControlIcon from './ControlIcon';
 import StateView from './StateView';
 import Progress from './Progress';
-import useTimeout from '../lib/useTimeout';
+import ConfigView from './ConfigView';
+import QualityView from './QualityView';
 
 const GradientWhite = 'rgba(0,0,0,0)';
 const GradientBlack = 'rgba(0,0,0,0.3)';
@@ -60,6 +62,8 @@ const styles = StyleSheet.create({
   },
 });
 
+const defaultConfig = { enableHardwareDecoder: true, setSpeed: 1.0, setScaleMode: 0 };
+
 function ControlerView({
   title = '',
   isFull = false,
@@ -79,18 +83,21 @@ function ControlerView({
   onPressReload,
   onPressFullIn,
   onPressFullOut,
-  onPressConfig,
-  onPressQuality,
+  onChangeConfig,
+  onChangeQuality,
   onSlide,
   themeColor,
 }) {
   const [visible, setVisible] = useState(false);
+  const [configVisible, setConfigVisible] = useState(false);
+  const [qualityVisible, setQualityVisible] = useState(false);
   const [value, setValue] = useState(current);
   const isSliding = useRef(false);
   const valueFormat = formatTime(value);
   const totalFormat = formatTime(total);
   const hasQuality = Array.isArray(qualityList) && qualityList.length;
   const quality = qualityList.find((o) => o.value === playSource);
+  const [configObj, setConfigObj] = useState(defaultConfig);
   const { label: qualityLabel } = quality || { label: '画质' };
 
   const { animateValue, bottomAnimate, headerAnimate, opacityAnimate } = useMemo(() => {
@@ -156,11 +163,11 @@ function ControlerView({
         {isFull && <ControlIcon onPress={onPressFullOut} name="left" />}
         <Text style={styles.textTitle}>{title}</Text>
         {Boolean(hasQuality && isFull) && (
-          <Text style={styles.textQuality} onPress={onPressQuality}>
+          <Text style={styles.textQuality} onPress={() => setQualityVisible(true)}>
             {qualityLabel}
           </Text>
         )}
-        {isFull && <ControlIcon name="setting" onPress={onPressConfig} />}
+        {isFull && <ControlIcon name="setting" onPress={() => setConfigVisible(true)} />}
       </AnimateLinearGradient>
       <PressView style={styles.stateview} onPress={handlePressPlayer} activeOpacity={1}>
         <StateView
@@ -217,6 +224,28 @@ function ControlerView({
         )}
       </AnimateLinearGradient>
       <Progress disable={visible} value={value} maxValue={total} themeColor={themeColor} />
+      <ConfigView
+        config={configObj}
+        visible={configVisible}
+        themeColor={themeColor}
+        onClose={() => setConfigVisible(false)}
+        onChange={(res) => {
+          const newConfig = Object.assign({}, configObj, res);
+          setConfigObj(newConfig);
+          onChangeConfig(newConfig);
+        }}
+      />
+      <QualityView
+        themeColor={themeColor}
+        playSource={playSource}
+        visible={qualityVisible}
+        qualityList={qualityList}
+        onChange={(res) => {
+          onChangeQuality(res.value);
+          setQualityVisible(false);
+        }}
+        onClose={() => setQualityVisible(false)}
+      />
     </SafeAreaView>
   );
 }
