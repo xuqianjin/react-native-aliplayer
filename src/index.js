@@ -25,6 +25,7 @@ const Player = forwardRef(
       onFullScreen,
       onCompletion,
       disableFullScreen,
+      setAutoPlay,
       ...restProps
     },
     ref
@@ -36,7 +37,7 @@ const Player = forwardRef(
     const [loading, setLoading] = useState(true);
     const [isFull, setIsFull] = useState(false);
     const [isComplate, setIsComplate] = useState(false);
-    const [isPlaying, setIsPlaying] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(setAutoPlay);
     const [loadingObj, setLoadingObj] = useState({});
     const [total, setTotal] = useState(0);
     const [current, setCurrent] = useState(0);
@@ -148,8 +149,9 @@ const Player = forwardRef(
         <StatusBar hidden={isFull} />
         <ALIViewPlayer
           {...restProps}
-          source={playSource}
           ref={playerRef}
+          source={playSource}
+          setAutoPlay={setAutoPlay}
           style={StyleSheet.absoluteFill}
           onAliPrepared={({ nativeEvent }) => {
             setTotal(nativeEvent.duration);
