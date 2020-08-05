@@ -96,7 +96,7 @@ function ControlerView({
   const valueFormat = formatTime(value);
   const totalFormat = formatTime(total);
   const hasQuality = Array.isArray(qualityList) && qualityList.length;
-  const quality = qualityList.find((o) => o.value === playSource);
+  const quality = qualityList && qualityList.find((o) => o.value === playSource);
   const [configObj, setConfigObj] = useState({ enableHardwareDecoder, setSpeed, setScaleMode });
   const { label: qualityLabel } = quality || { label: '画质' };
 
