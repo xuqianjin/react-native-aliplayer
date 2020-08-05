@@ -62,18 +62,18 @@ const styles = StyleSheet.create({
   },
 });
 
-const defaultConfig = { enableHardwareDecoder: true, setSpeed: 1.0, setScaleMode: 0 };
-
 function ControlerView({
-  title = '',
-  isFull = false,
-  current = 0,
-  total = 0,
-  isPlaying = false,
-  disableFullScreen = false,
+  title,
+  isFull,
+  current,
+  total,
+  isPlaying,
+  enableFullScreen,
   playSource,
-  qualityList = [],
-
+  qualityList,
+  enableHardwareDecoder,
+  setSpeed,
+  setScaleMode,
   isError,
   isLoading,
   errorObj,
@@ -97,7 +97,7 @@ function ControlerView({
   const totalFormat = formatTime(total);
   const hasQuality = Array.isArray(qualityList) && qualityList.length;
   const quality = qualityList.find((o) => o.value === playSource);
-  const [configObj, setConfigObj] = useState(defaultConfig);
+  const [configObj, setConfigObj] = useState({ enableHardwareDecoder, setSpeed, setScaleMode });
   const { label: qualityLabel } = quality || { label: '画质' };
 
   const { animateValue, bottomAnimate, headerAnimate, opacityAnimate } = useMemo(() => {
@@ -216,7 +216,7 @@ function ControlerView({
           }}
         />
         <Text style={styles.textTime}>{`${totalFormat.M}:${totalFormat.S}`}</Text>
-        {!disableFullScreen && (
+        {enableFullScreen && (
           <ControlIcon
             onPress={isFull ? onPressFullOut : onPressFullIn}
             name={isFull ? 'shrink' : 'arrowsalt'}

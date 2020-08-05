@@ -24,7 +24,7 @@ const Player = forwardRef(
       themeColor,
       onFullScreen,
       onCompletion,
-      disableFullScreen,
+      enableFullScreen,
       setAutoPlay,
       ...restProps
     },
@@ -198,6 +198,7 @@ const Player = forwardRef(
           <Image source={poster} resizeMode="cover" style={StyleSheet.absoluteFill} />
         )}
         <ControlerView
+          {...restProps}
           title={title}
           isFull={isFull}
           current={current}
@@ -218,7 +219,7 @@ const Player = forwardRef(
           onPressFullOut={handleFullScreenOut}
           onChangeConfig={handleChangeConfig}
           onChangeQuality={handleChangeQuality}
-          disableFullScreen={disableFullScreen}
+          enableFullScreen={enableFullScreen}
         />
       </View>
     );
@@ -236,7 +237,7 @@ Player.propTypes = {
   poster: Image.propTypes.source, // 封面图
   onFullScreen: PropTypes.func, // 全屏回调事件
   onCompletion: PropTypes.func, // 播放完成事件
-  disableFullScreen: PropTypes.bool, // 禁止全屏
+  enableFullScreen: PropTypes.bool, // 是否允许全屏
   themeColor: PropTypes.string, // 播放器主题
 };
 
@@ -244,6 +245,9 @@ Player.defaultProps = {
   onFullScreen: () => {},
   onCompletion: () => {},
   themeColor: '#F85959',
+  enableHardwareDecoder: false,
+  setSpeed: 1.0,
+  setScaleMode: 0,
 };
 
 export default Player;
