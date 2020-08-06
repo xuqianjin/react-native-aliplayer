@@ -1,7 +1,9 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import { StyleSheet, StatusBar, Image, View } from 'react-native';
 import PropTypes from 'prop-types';
-import { useBackHandler, useAppState, useDimensions } from '@react-native-community/hooks';
+import { useBackHandler, useAppState } from '@react-native-community/hooks';
+import { hideNavigationBar, showNavigationBar } from 'react-native-navigation-bar-color';
+import useDimensions from './lib/useDimensions';
 
 import ALIViewPlayer from './ALIViewPlayer';
 import ControlerView from './components/ControlerView';
@@ -42,7 +44,7 @@ const Player = forwardRef(
     const [total, setTotal] = useState(0);
     const [current, setCurrent] = useState(0);
     const [posterVisible, setPosterVisible] = useState(Boolean(poster));
-    const window = useDimensions().window;
+    const screen = useDimensions().screen;
     const currentAppState = useAppState();
     const isChangeQuality = useRef(false);
 
@@ -119,11 +121,13 @@ const Player = forwardRef(
     const handleFullScreenIn = () => {
       setIsFull(true);
       onFullScreen(true);
+      hideNavigationBar();
     };
 
     const handleFullScreenOut = () => {
       onFullScreen(false);
       setIsFull(false);
+      showNavigationBar();
     };
 
     const handleChangeConfig = (config) => {
@@ -139,8 +143,8 @@ const Player = forwardRef(
       position: 'absolute',
       top: 0,
       left: 0,
-      width: window.width,
-      height: window.height,
+      width: screen.width,
+      height: screen.height,
       zIndex: 100,
     };
 

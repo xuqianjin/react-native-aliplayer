@@ -62,7 +62,7 @@ const playScaleMode = [
 ];
 
 function ConfigView({ visible, config, themeColor, onChange, onClose }) {
-  const { enableHardwareDecoder, setSpeed, setScaleMode } = config;
+  const { setSpeed, setScaleMode, setLoop, setMute } = config;
   if (!visible) {
     return null;
   }
@@ -72,12 +72,22 @@ function ConfigView({ visible, config, themeColor, onChange, onClose }) {
       <View style={styles.content} onPress={onClose}>
         <View style={styles.block}>
           <View style={styles.row}>
-            <Text style={styles.textWhite}>硬件解码:</Text>
+            <Text style={styles.textWhite}>循环播放:</Text>
             <CusSwitch
               themeColor={themeColor}
-              defaultValue={enableHardwareDecoder}
+              defaultValue={setLoop}
               onChange={(value) => {
-                onChange({ enableHardwareDecoder: value });
+                onChange({ setLoop: value });
+              }}
+            />
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.textWhite}>静音播放:</Text>
+            <CusSwitch
+              themeColor={themeColor}
+              defaultValue={setMute}
+              onChange={(value) => {
+                onChange({ setMute: value });
               }}
             />
           </View>

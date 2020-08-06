@@ -71,9 +71,12 @@ function ControlerView({
   enableFullScreen,
   playSource,
   qualityList,
-  enableHardwareDecoder,
+  // config
   setSpeed,
   setScaleMode,
+  setLoop,
+  setMute,
+  // ******
   isError,
   isLoading,
   errorObj,
@@ -97,7 +100,12 @@ function ControlerView({
   const totalFormat = formatTime(total);
   const hasQuality = Array.isArray(qualityList) && qualityList.length;
   const quality = qualityList && qualityList.find((o) => o.value === playSource);
-  const [configObj, setConfigObj] = useState({ enableHardwareDecoder, setSpeed, setScaleMode });
+  const [configObj, setConfigObj] = useState({
+    setSpeed,
+    setScaleMode,
+    setLoop,
+    setMute,
+  });
   const { label: qualityLabel } = quality || { label: '画质' };
 
   const { animateValue, bottomAnimate, headerAnimate, opacityAnimate } = useMemo(() => {

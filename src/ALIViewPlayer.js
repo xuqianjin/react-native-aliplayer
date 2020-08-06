@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { UIManager, findNodeHandle, requireNativeComponent, StyleSheet } from 'react-native';
+import { UIManager, findNodeHandle, requireNativeComponent } from 'react-native';
 import PropTypes from 'prop-types';
 
 export default class ALIViewPlayer extends PureComponent {
@@ -56,8 +56,8 @@ export default class ALIViewPlayer extends PureComponent {
 
   // 跳转到指定位置,传入单位为秒
   seekTo = (position = 0) => {
-    if (Number(position)) {
-      this._dispatchCommand('seekTo', [Number(position)]);
+    if (typeof position === 'number') {
+      this._dispatchCommand('seekTo', [position]);
     }
   };
 
