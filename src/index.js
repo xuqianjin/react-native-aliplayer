@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import { StyleSheet, StatusBar, Image, View } from 'react-native';
 import PropTypes from 'prop-types';
-import { useBackHandler, useAppState } from '@react-native-community/hooks';
+import { useBackHandler, useAppState, useDimensions } from '@react-native-community/hooks';
 import { hideNavigationBar, showNavigationBar } from 'react-native-navigation-bar-color';
-import useDimensions from './lib/useDimensions';
 
 import ALIViewPlayer from './ALIViewPlayer';
 import ControlerView from './components/ControlerView';
@@ -44,7 +43,7 @@ const Player = forwardRef(
     const [total, setTotal] = useState(0);
     const [current, setCurrent] = useState(0);
     const [posterVisible, setPosterVisible] = useState(Boolean(poster));
-    const screen = useDimensions().screen;
+    const { screen, window } = useDimensions();
     const currentAppState = useAppState();
     const isChangeQuality = useRef(false);
 
@@ -139,12 +138,17 @@ const Player = forwardRef(
       changeSource(newSource);
     };
 
+    const isOrientationLandscape = window.width > window.height;
     const fullscreenStyle = {
       position: 'absolute',
       top: 0,
       left: 0,
-      width: screen.width,
-      height: screen.height,
+      width: isOrientationLandscape
+        ? Math.max(screen.width, screen.height)
+        : Math.min(screen.width, screen.height),
+      height: isOrientationLandscape
+        ? Math.min(screen.width, screen.height)
+        : Math.max(screen.width, screen.height),
       zIndex: 100,
     };
 
