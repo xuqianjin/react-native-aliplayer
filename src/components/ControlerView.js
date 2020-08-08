@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import { Text, Animated, Easing, SafeAreaView, StyleSheet } from 'react-native';
+import { Text, Animated, Easing, SafeAreaView, StyleSheet, Image } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { Slider } from 'react-native-elements';
 
@@ -21,6 +21,7 @@ const AnimateLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 const styles = StyleSheet.create({
   controler: {
     ...StyleSheet.absoluteFill,
+    backgroundColor: 'transparent',
   },
   stateview: {
     flex: 1,
@@ -71,6 +72,9 @@ function ControlerView({
   enableFullScreen,
   playSource,
   qualityList,
+  themeColor,
+  poster,
+  isStart,
   // config
   setSpeed,
   setScaleMode,
@@ -89,7 +93,6 @@ function ControlerView({
   onChangeConfig,
   onChangeQuality,
   onSlide,
-  themeColor,
 }) {
   const [visible, setVisible] = useState(false);
   const [configVisible, setConfigVisible] = useState(false);
@@ -161,6 +164,7 @@ function ControlerView({
 
   return (
     <SafeAreaView style={styles.controler}>
+      {!isStart && <Image source={poster} resizeMode="cover" style={StyleSheet.absoluteFill} />}
       <AnimateLinearGradient
         colors={[GradientBlack, GradientWhite]}
         style={[

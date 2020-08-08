@@ -2,6 +2,7 @@ package com.rnaliplayer;
 
 import android.graphics.Color;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,14 +17,15 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.common.MapBuilder;
-import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
+import com.facebook.react.uimanager.ViewGroupManager;
 
+import java.util.List;
 import java.util.Map;
 
-public class RNAliplayerView extends SimpleViewManager<AliSurfaceView> {
+public class ALIViewPlayer extends ViewGroupManager<AliSurfaceView> {
     private static final String REACT_CLASS = "RNAliplayer";
     private static final String TAG = REACT_CLASS;
     private RCTEventEmitter mEventEmitter;
@@ -52,6 +54,16 @@ public class RNAliplayerView extends SimpleViewManager<AliSurfaceView> {
         public String toString() {
             return mName;
         }
+    }
+
+    @Override
+    public void addView(AliSurfaceView parent, View child, int index) {
+        super.addView(parent, child, parent.getChildCount());
+    }
+
+    @Override
+    public void addViews(AliSurfaceView parent, List<View> views) {
+        super.addViews(parent, views);
     }
 
     @NonNull
@@ -112,6 +124,7 @@ public class RNAliplayerView extends SimpleViewManager<AliSurfaceView> {
                 break;
             case "seekTo":
                 long position = args.getInt(0) * 1000;
+                Log.i(TAG, "receiveCommand: " + position);
                 view.aliyunVodPlayer.seekTo(position, IPlayer.SeekMode.Accurate);
                 break;
         }
@@ -339,5 +352,4 @@ public class RNAliplayerView extends SimpleViewManager<AliSurfaceView> {
             }
         });
     }
-
 }

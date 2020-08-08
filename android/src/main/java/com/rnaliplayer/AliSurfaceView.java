@@ -1,24 +1,25 @@
 package com.rnaliplayer;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.FrameLayout;
 
 import com.aliyun.player.AliPlayer;
 import com.aliyun.player.AliPlayerFactory;
 
-public class AliSurfaceView extends SurfaceView {
+public class AliSurfaceView extends FrameLayout {
     public AliPlayer aliyunVodPlayer;
 
     public AliSurfaceView(Context context) {
         super(context);
         aliyunVodPlayer = AliPlayerFactory.createAliPlayer(context);
-        this.getHolder().addCallback(new SurfaceHolder.Callback() {
+        SurfaceView surfaceView = new SurfaceView(context);
+        addView(surfaceView);
+        surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
                 aliyunVodPlayer.setDisplay(holder);
-
             }
 
             @Override

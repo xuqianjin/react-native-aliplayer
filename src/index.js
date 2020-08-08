@@ -42,7 +42,7 @@ const Player = forwardRef(
     const [loadingObj, setLoadingObj] = useState({});
     const [total, setTotal] = useState(0);
     const [current, setCurrent] = useState(0);
-    const [posterVisible, setPosterVisible] = useState(Boolean(poster));
+    const [isStart, setIsStart] = useState(false);
     const { screen, window } = useDimensions();
     const currentAppState = useAppState();
     const isChangeQuality = useRef(false);
@@ -97,6 +97,7 @@ const Player = forwardRef(
     const handlePlay = () => {
       if (isComplate) {
         playerRef.current.restartPlay();
+        setIsComplate(false);
       } else {
         playerRef.current.startPlay();
       }
@@ -153,58 +154,53 @@ const Player = forwardRef(
     };
 
     return (
-      <View style={[styles.base, isFull ? fullscreenStyle : style]}>
+      <ALIViewPlayer
+        {...restProps}
+        ref={playerRef}
+        source={playSource}
+        setAutoPlay={setAutoPlay}
+        style={[styles.base, isFull ? fullscreenStyle : style]}
+        onAliPrepared={({ nativeEvent }) => {
+          setTotal(nativeEvent.duration);
+          if (isPlaying) {
+            playerRef.current.startPlay();
+          }
+          if (isChangeQuality.current) {
+            playerRef.current.seekTo(current);
+          } else {
+            setCurrent(0);
+          }
+        }}
+        onAliLoadingBegin={() => {
+          setLoading(true);
+          setLoadingObj({});
+        }}
+        onAliLoadingProgress={({ nativeEvent }) => {
+          setLoadingObj(nativeEvent);
+        }}
+        onAliLoadingEnd={() => {
+          setLoading(false);
+          setLoadingObj({});
+        }}
+        onAliRenderingStart={() => {
+          setLoading(false);
+          setIsPlaying(true);
+          setIsStart(true);
+        }}
+        onAliCurrentPositionUpdate={({ nativeEvent }) => {
+          setCurrent(nativeEvent.position);
+        }}
+        onAliCompletion={() => {
+          setIsComplate(true);
+          setIsPlaying(false);
+          onCompletion();
+        }}
+        onAliError={({ nativeEvent }) => {
+          setError(true);
+          setErrorObj(nativeEvent);
+        }}
+      >
         <StatusBar hidden={isFull} />
-        <ALIViewPlayer
-          {...restProps}
-          ref={playerRef}
-          source={playSource}
-          setAutoPlay={setAutoPlay}
-          style={StyleSheet.absoluteFill}
-          onAliPrepared={({ nativeEvent }) => {
-            setTotal(nativeEvent.duration);
-            if (isPlaying) {
-              playerRef.current.startPlay();
-            }
-            if (isChangeQuality.current) {
-              playerRef.current.seekTo(current);
-            } else {
-              setCurrent(0);
-            }
-          }}
-          onAliLoadingBegin={() => {
-            setLoading(true);
-            setLoadingObj({});
-          }}
-          onAliLoadingProgress={({ nativeEvent }) => {
-            setLoadingObj(nativeEvent);
-          }}
-          onAliLoadingEnd={() => {
-            setLoading(false);
-            setLoadingObj({});
-          }}
-          onAliRenderingStart={() => {
-            setLoading(false);
-            setIsComplate(false);
-            setIsPlaying(true);
-            setPosterVisible(false);
-          }}
-          onAliCurrentPositionUpdate={({ nativeEvent }) => {
-            setCurrent(nativeEvent.position);
-          }}
-          onAliCompletion={() => {
-            setIsComplate(true);
-            setIsPlaying(false);
-            onCompletion();
-          }}
-          onAliError={({ nativeEvent }) => {
-            setError(true);
-            setErrorObj(nativeEvent);
-          }}
-        />
-        {posterVisible && (
-          <Image source={poster} resizeMode="cover" style={StyleSheet.absoluteFill} />
-        )}
         <ControlerView
           {...restProps}
           title={title}
@@ -212,6 +208,8 @@ const Player = forwardRef(
           current={current}
           total={total}
           isError={error}
+          poster={poster}
+          isStart={isStart}
           isLoading={loading}
           errorObj={errorObj}
           isPlaying={isPlaying}
@@ -229,7 +227,7 @@ const Player = forwardRef(
           onChangeQuality={handleChangeQuality}
           enableFullScreen={enableFullScreen}
         />
-      </View>
+      </ALIViewPlayer>
     );
   }
 );
