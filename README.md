@@ -17,7 +17,9 @@
 ```javascript
 import RNAliplayer from 'react-native-aliplayer';
 
-<RNAliplayer source={source.url} style={{ width: screenWidth, height: 200 }} />;
+const source='http://200024424.vod.myqcloud.com/200024424_709ae516bdf811e6ad39991f76a4df69.f20.mp4'
+
+<RNAliplayer source={source} style={{ width: screenWidth, height: 200 }} />;
 ```
 
 ## Props
