@@ -30,8 +30,8 @@ const source='http://200024424.vod.myqcloud.com/200024424_709ae516bdf811e6ad3999
 | qualityList      | 可切换资源   |
 | poster           | 封面图       |
 | enableFullScreen | 是否允许全屏 |
-| onFullScreen     | 全屏事件     |
 | themeColor       | 主题色       |
+| onFullScreen     | 全屏事件     |
 | onCompletion     | 播放完毕事件 |
 
 ## Method
