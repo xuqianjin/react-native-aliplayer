@@ -256,4 +256,4 @@ Player.defaultProps = {
   setScaleMode: 0,
 };
 
-export default Player;
+export default React.memo(Player);
