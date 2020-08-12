@@ -25,7 +25,7 @@ import com.facebook.react.uimanager.ViewGroupManager;
 import java.util.List;
 import java.util.Map;
 
-public class ALIViewPlayer extends ViewGroupManager<AliSurfaceView> {
+public class RNAliplayerView extends ViewGroupManager<AliSurfaceView> {
     private static final String REACT_CLASS = "RNAliplayer";
     private static final String TAG = REACT_CLASS;
     private RCTEventEmitter mEventEmitter;
