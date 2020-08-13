@@ -35,12 +35,14 @@ const styles = StyleSheet.create({
   },
   textQuality: {
     color: 'white',
-    marginRight: 10,
     fontSize: 16,
   },
   textTime: {
     color: 'white',
     fontSize: 16,
+  },
+  iconLeft: {
+    marginLeft: 10,
   },
   header: {
     flexDirection: 'row',
@@ -70,6 +72,7 @@ function ControlerView({
   total,
   isPlaying,
   enableFullScreen,
+  enableCast,
   playSource,
   qualityList,
   themeColor,
@@ -93,6 +96,7 @@ function ControlerView({
   onChangeConfig,
   onChangeQuality,
   onSlide,
+  onCastClick,
 }) {
   const [visible, setVisible] = useState(false);
   const [configVisible, setConfigVisible] = useState(false);
@@ -175,11 +179,23 @@ function ControlerView({
         {isFull && <ControlIcon onPress={onPressFullOut} name="left" />}
         <Text style={styles.textTitle}>{title}</Text>
         {Boolean(hasQuality && isFull) && (
-          <Text style={styles.textQuality} onPress={() => setQualityVisible(true)}>
+          <Text
+            style={[styles.textQuality, styles.iconLeft]}
+            onPress={() => setQualityVisible(true)}
+          >
             {qualityLabel}
           </Text>
         )}
-        {isFull && <ControlIcon name="setting" onPress={() => setConfigVisible(true)} />}
+        {enableCast && (
+          <ControlIcon iconStyle={styles.iconLeft} name="iconfontdesktop" onPress={onCastClick} />
+        )}
+        {isFull && (
+          <ControlIcon
+            iconStyle={styles.iconLeft}
+            name="setting"
+            onPress={() => setConfigVisible(true)}
+          />
+        )}
       </AnimateLinearGradient>
       <PressView style={styles.stateview} onPress={handlePressPlayer} activeOpacity={1}>
         <StateView

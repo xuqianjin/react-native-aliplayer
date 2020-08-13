@@ -25,7 +25,6 @@ const Player = forwardRef(
       themeColor,
       onFullScreen,
       onCompletion,
-      enableFullScreen,
       setAutoPlay,
       ...restProps
     },
@@ -225,7 +224,6 @@ const Player = forwardRef(
           onPressFullOut={handleFullScreenOut}
           onChangeConfig={handleChangeConfig}
           onChangeQuality={handleChangeQuality}
-          enableFullScreen={enableFullScreen}
         />
       </ALIViewPlayer>
     );
@@ -245,11 +243,14 @@ Player.propTypes = {
   onCompletion: PropTypes.func, // 播放完成事件
   enableFullScreen: PropTypes.bool, // 是否允许全屏
   themeColor: PropTypes.string, // 播放器主题
+  enableCast: PropTypes.bool, // 是否允许投屏按钮
+  onCastClick: PropTypes.func, // 投屏按钮点击事件
 };
 
 Player.defaultProps = {
   onFullScreen: () => {},
   onCompletion: () => {},
+  onCastClick: () => {},
   themeColor: '#F85959',
   enableHardwareDecoder: false,
   setSpeed: 1.0,
