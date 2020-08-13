@@ -243,7 +243,7 @@ Player.propTypes = {
   onCompletion: PropTypes.func, // 播放完成事件
   enableFullScreen: PropTypes.bool, // 是否允许全屏
   themeColor: PropTypes.string, // 播放器主题
-  enableCast: PropTypes.bool, // 是否允许投屏按钮
+  enableCast: PropTypes.bool, // 是否显示投屏按钮
   onCastClick: PropTypes.func, // 投屏按钮点击事件
 };
 

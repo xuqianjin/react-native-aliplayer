@@ -24,15 +24,17 @@ const source='http://200024424.vod.myqcloud.com/200024424_709ae516bdf811e6ad3999
 
 ## Props
 
-| name             | description  |
-| ---------------- | ------------ |
-| source           | 播放资源     |
-| qualityList      | 可切换资源   |
-| poster           | 封面图       |
-| enableFullScreen | 是否允许全屏 |
-| themeColor       | 主题色       |
-| onFullScreen     | 全屏事件     |
-| onCompletion     | 播放完毕事件 |
+| name             | description      |
+| ---------------- | ---------------- |
+| source           | 播放资源         |
+| qualityList      | 可切换资源       |
+| poster           | 封面图           |
+| enableFullScreen | 是否允许全屏     |
+| themeColor       | 主题色           |
+| onFullScreen     | 全屏事件         |
+| onCompletion     | 播放完毕事件     |
+| enableCast       | 是否显示投屏按钮 |
+| onCastClick      | 投屏按钮点击事件 |
 
 ## Method
 
