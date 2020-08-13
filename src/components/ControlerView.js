@@ -101,9 +101,9 @@ function ControlerView({
   const [visible, setVisible] = useState(false);
   const [configVisible, setConfigVisible] = useState(false);
   const [qualityVisible, setQualityVisible] = useState(false);
-  const [value, setValue] = useState(current);
+  const [seek, setSeek] = useState(current);
   const isSliding = useRef(false);
-  const valueFormat = formatTime(value);
+  const seekFormat = formatTime(seek);
   const totalFormat = formatTime(total);
   const hasQuality = Array.isArray(qualityList) && qualityList.length;
   const quality = qualityList && qualityList.find((o) => o.value === playSource);
@@ -143,7 +143,7 @@ function ControlerView({
 
   useEffect(() => {
     if (!isSliding.current) {
-      setValue(current);
+      setSeek(current);
     }
   }, [current]);
 
@@ -187,7 +187,11 @@ function ControlerView({
           </Text>
         )}
         {enableCast && (
-          <ControlIcon iconStyle={styles.iconLeft} name="iconfontdesktop" onPress={onCastClick} />
+          <ControlIcon
+            iconStyle={styles.iconLeft}
+            name="iconfontdesktop"
+            onPress={() => onCastClick({ seek, playSource })}
+          />
         )}
         {isFull && (
           <ControlIcon
@@ -220,10 +224,10 @@ function ControlerView({
           onPress={isPlaying ? onPressPause : onPressPlay}
           name={isPlaying ? 'pausecircleo' : 'playcircleo'}
         />
-        <Text style={styles.textTime}>{`${valueFormat.M}:${valueFormat.S}`}</Text>
+        <Text style={styles.textTime}>{`${seekFormat.M}:${seekFormat.S}`}</Text>
         <Slider
           step={1}
-          value={value}
+          value={seek}
           minimumValue={0}
           maximumValue={total}
           style={styles.bottomSlide}
@@ -237,10 +241,10 @@ function ControlerView({
           }}
           onSlidingComplete={() => {
             isSliding.current = false;
-            onSlide(value);
+            onSlide(seek);
           }}
           onValueChange={(data) => {
-            setValue(data);
+            setSeek(data);
           }}
         />
         <Text style={styles.textTime}>{`${totalFormat.M}:${totalFormat.S}`}</Text>
@@ -251,7 +255,7 @@ function ControlerView({
           />
         )}
       </AnimateLinearGradient>
-      <Progress disable={visible} value={value} maxValue={total} themeColor={themeColor} />
+      <Progress disable={visible} value={seek} maxValue={total} themeColor={themeColor} />
       <ConfigView
         config={configObj}
         visible={configVisible}
