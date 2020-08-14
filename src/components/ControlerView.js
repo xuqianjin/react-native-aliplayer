@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   iconLeft: {
-    marginLeft: 10,
+    marginLeft: 20,
   },
   header: {
     flexDirection: 'row',

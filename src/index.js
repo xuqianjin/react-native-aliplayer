@@ -139,6 +139,7 @@ const Player = forwardRef(
     };
 
     const isOrientationLandscape = window.width > window.height;
+
     const fullscreenStyle = {
       position: 'absolute',
       top: 0,
@@ -152,80 +153,94 @@ const Player = forwardRef(
       zIndex: 100,
     };
 
+    const fullwindowStyle = {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: isOrientationLandscape
+        ? Math.max(window.width, window.height)
+        : Math.min(window.width, window.height),
+      height: isOrientationLandscape
+        ? Math.min(window.width, window.height)
+        : Math.max(window.width, window.height),
+    };
+
     return (
-      <ALIViewPlayer
-        {...restProps}
-        ref={playerRef}
-        source={playSource}
-        setAutoPlay={setAutoPlay}
-        style={[styles.base, isFull ? fullscreenStyle : style]}
-        onAliPrepared={({ nativeEvent }) => {
-          setTotal(nativeEvent.duration);
-          if (isPlaying) {
-            playerRef.current.startPlay();
-          }
-          if (isChangeQuality.current) {
-            playerRef.current.seekTo(current);
-          } else {
-            setCurrent(0);
-          }
-        }}
-        onAliLoadingBegin={() => {
-          setLoading(true);
-          setLoadingObj({});
-        }}
-        onAliLoadingProgress={({ nativeEvent }) => {
-          setLoadingObj(nativeEvent);
-        }}
-        onAliLoadingEnd={() => {
-          setLoading(false);
-          setLoadingObj({});
-        }}
-        onAliRenderingStart={() => {
-          setLoading(false);
-          setIsPlaying(true);
-          setIsStart(true);
-        }}
-        onAliCurrentPositionUpdate={({ nativeEvent }) => {
-          setCurrent(nativeEvent.position);
-        }}
-        onAliCompletion={() => {
-          setIsComplate(true);
-          setIsPlaying(false);
-          onCompletion();
-        }}
-        onAliError={({ nativeEvent }) => {
-          setError(true);
-          setErrorObj(nativeEvent);
-        }}
-      >
-        <StatusBar hidden={isFull} />
-        <ControlerView
+      <View style={[styles.base, isFull ? fullscreenStyle : style]}>
+        <ALIViewPlayer
           {...restProps}
-          title={title}
-          isFull={isFull}
-          current={current}
-          total={total}
-          isError={error}
-          poster={poster}
-          isStart={isStart}
-          isLoading={loading}
-          errorObj={errorObj}
-          isPlaying={isPlaying}
-          loadingObj={loadingObj}
-          themeColor={themeColor}
-          playSource={playSource}
-          qualityList={qualityList}
-          onSlide={handleSlide}
-          onPressPlay={handlePlay}
-          onPressPause={handlePause}
-          onPressReload={handleReload}
-          onPressFullIn={handleFullScreenIn}
-          onPressFullOut={handleFullScreenOut}
-          onChangeConfig={handleChangeConfig}
-          onChangeQuality={handleChangeQuality}
-        />
-      </ALIViewPlayer>
+          ref={playerRef}
+          source={playSource}
+          setAutoPlay={setAutoPlay}
+          style={isFull ? fullwindowStyle : StyleSheet.absoluteFill}
+          onAliPrepared={({ nativeEvent }) => {
+            setTotal(nativeEvent.duration);
+            if (isPlaying) {
+              playerRef.current.startPlay();
+            }
+            if (isChangeQuality.current) {
+              playerRef.current.seekTo(current);
+            } else {
+              setCurrent(0);
+            }
+          }}
+          onAliLoadingBegin={() => {
+            setLoading(true);
+            setLoadingObj({});
+          }}
+          onAliLoadingProgress={({ nativeEvent }) => {
+            setLoadingObj(nativeEvent);
+          }}
+          onAliLoadingEnd={() => {
+            setLoading(false);
+            setLoadingObj({});
+          }}
+          onAliRenderingStart={() => {
+            setLoading(false);
+            setIsPlaying(true);
+            setIsStart(true);
+          }}
+          onAliCurrentPositionUpdate={({ nativeEvent }) => {
+            setCurrent(nativeEvent.position);
+          }}
+          onAliCompletion={() => {
+            setIsComplate(true);
+            setIsPlaying(false);
+            onCompletion();
+          }}
+          onAliError={({ nativeEvent }) => {
+            setError(true);
+            setErrorObj(nativeEvent);
+          }}
+        >
+          <StatusBar hidden={isFull} />
+          <ControlerView
+            {...restProps}
+            title={title}
+            isFull={isFull}
+            current={current}
+            total={total}
+            isError={error}
+            poster={poster}
+            isStart={isStart}
+            isLoading={loading}
+            errorObj={errorObj}
+            isPlaying={isPlaying}
+            loadingObj={loadingObj}
+            themeColor={themeColor}
+            playSource={playSource}
+            qualityList={qualityList}
+            onSlide={handleSlide}
+            onPressPlay={handlePlay}
+            onPressPause={handlePause}
+            onPressReload={handleReload}
+            onPressFullIn={handleFullScreenIn}
+            onPressFullOut={handleFullScreenOut}
+            onChangeConfig={handleChangeConfig}
+            onChangeQuality={handleChangeQuality}
+          />
+        </ALIViewPlayer>
+      </View>
     );
   }
 );
