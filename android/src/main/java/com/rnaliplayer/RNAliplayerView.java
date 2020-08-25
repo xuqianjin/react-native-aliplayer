@@ -184,7 +184,7 @@ public class RNAliplayerView extends ViewGroupManager<AliSurfaceView> {
         //设置referer
         config.mReferrer = referrer;
         //设置配置给播放器
-        view.aliyunVodPlayer.setConfig(config);
+        updateAliConfig(view, config);
     }
 
     //设置UserAgent
@@ -195,7 +195,7 @@ public class RNAliplayerView extends ViewGroupManager<AliSurfaceView> {
         //设置UA
         config.mUserAgent = UserAgent;
         //设置配置给播放器
-        view.aliyunVodPlayer.setConfig(config);
+        updateAliConfig(view, config);
     }
 
     //设置画面的镜像模式：水平镜像，垂直镜像，无镜像。
@@ -260,6 +260,10 @@ public class RNAliplayerView extends ViewGroupManager<AliSurfaceView> {
             headers[i] = headerArray.getString(i);
         }
         config.setCustomHeaders(headers);
+        updateAliConfig(view, config);
+    }
+
+    private void updateAliConfig(AliSurfaceView view, PlayerConfig config) {
         view.aliyunVodPlayer.setConfig(config);
         view.aliyunVodPlayer.prepare();
     }
