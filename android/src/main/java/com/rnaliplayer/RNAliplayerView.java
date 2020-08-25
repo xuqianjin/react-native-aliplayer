@@ -247,7 +247,21 @@ public class RNAliplayerView extends ViewGroupManager<AliSurfaceView> {
                 view.aliyunVodPlayer.setScaleMode(IPlayer.ScaleMode.SCALE_TO_FILL);
                 break;
         }
-        view.requestLayout();
+    }
+
+    @ReactProp(name = "configHeader")
+    public void configHeader(AliSurfaceView view, ReadableArray headerArray) {
+        if (headerArray == null) {
+            return;
+        }
+        PlayerConfig config = view.aliyunVodPlayer.getConfig();
+        String[] headers = new String[headerArray.size()];
+        for (int i = 0; i < headerArray.size(); i++) {
+            headers[i] = headerArray.getString(i);
+        }
+        config.setCustomHeaders(headers);
+        view.aliyunVodPlayer.setConfig(config);
+        view.aliyunVodPlayer.prepare();
     }
 
     private void initConfig(AliSurfaceView view) {
@@ -353,3 +367,4 @@ public class RNAliplayerView extends ViewGroupManager<AliSurfaceView> {
         });
     }
 }
+

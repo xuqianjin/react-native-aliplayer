@@ -80,6 +80,7 @@ ALIViewPlayer.propTypes = {
   setMirrorMode: PropTypes.oneOf([0, 1, 2]), // 0:无镜像;1:横向;2:竖向
   setRotateMode: PropTypes.oneOf([0, 1, 2, 3]), // 设置旋转 0:0度;1:90度;2:180度;3:270度;
   setScaleMode: PropTypes.oneOf([0, 1, 2]), // 设置画面缩放模式 0:宽高比适应;1:宽高比填充;2:拉伸填充;
+  configHeader: PropTypes.arrayOf(PropTypes.string), // 配置自定义header
 
   onAliCompletion: PropTypes.func, // 播放完成事件
   onAliError: PropTypes.func, // 出错事件

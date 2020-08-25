@@ -196,6 +196,7 @@ const Player = forwardRef(
             setLoadingObj({});
           }}
           onAliRenderingStart={() => {
+            setError(false);
             setLoading(false);
             setIsPlaying(true);
             setIsStart(true);
