@@ -143,6 +143,18 @@
   }
 }
 
+- (void)setConfigHeader:(NSArray *)configHeader{
+    _configHeader = configHeader;
+    //先获取配置
+    AVPConfig *config = [self.player getConfig];
+    //定义header
+    NSMutableArray *httpHeaders = [NSMutableArray arrayWithArray:configHeader];
+    //设置header
+    config.httpHeaders = httpHeaders;
+    //设置配置给播放器
+    [self.player setConfig:config];
+}
+
 #pragma mark - AVPDelegate
 /**
  @brief 错误代理回调

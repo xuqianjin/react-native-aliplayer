@@ -24,6 +24,7 @@ RCT_EXPORT_VIEW_PROPERTY(setUserAgent, NSString)
 RCT_EXPORT_VIEW_PROPERTY(setMirrorMode, int)
 RCT_EXPORT_VIEW_PROPERTY(setRotateMode, int)
 RCT_EXPORT_VIEW_PROPERTY(setScaleMode, int)
+RCT_EXPORT_VIEW_PROPERTY(configHeader, NSArray)
 
 //暴露方法（原生调用，js回调）
 RCT_EXPORT_VIEW_PROPERTY(onAliCompletion, RCTBubblingEventBlock)
