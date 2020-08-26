@@ -30,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,assign) int  setMirrorMode;
 @property(nonatomic,assign) int  setRotateMode;
 @property(nonatomic,assign) int  setScaleMode;
+@property(nonatomic,strong) NSArray * configHeader;
 
 //定义要暴露的事件
 @property (nonatomic, copy) RCTBubblingEventBlock onAliCompletion;
