@@ -1,5 +1,7 @@
 export const formatTime = (time) => {
-  const S = ('00' + (time % 60)).slice(-2);
-  const M = ('00' + parseInt(time / 60)).slice(-2);
+  const s = parseInt(time % 60) || 0;
+  const m = parseInt(time / 60) || 0;
+  const S = s > 9 ? String(s) : '0' + s;
+  const M = m > 9 ? String(m) : '0' + m;
   return { M, S };
 };
