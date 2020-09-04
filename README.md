@@ -42,6 +42,8 @@ const source='http://200024424.vod.myqcloud.com/200024424_709ae516bdf811e6ad3999
 | ---------- | ---------- | ------------- |
 | play       | true/false | 开始/暂停播放 |
 | fullscreen | true/false | 控制是否全屏  |
+| stop       | /          | 停止播放      |
+| seekTo     | number(秒) | 快进到多少秒  |
 
 ```js
 this.RNAliplayerRef.play();

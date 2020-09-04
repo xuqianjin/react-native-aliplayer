@@ -37,6 +37,7 @@ const Player = forwardRef(
     const [loading, setLoading] = useState(true);
     const [isFull, setIsFull] = useState(false);
     const [isComplate, setIsComplate] = useState(false);
+    const [isStopPlay, setIsStopPlay] = useState(false);
     const [isPlaying, setIsPlaying] = useState(setAutoPlay);
     const [loadingObj, setLoadingObj] = useState({});
     const [total, setTotal] = useState(0);
@@ -61,6 +62,8 @@ const Player = forwardRef(
           handleFullScreenOut();
         }
       },
+      stop: handleStop,
+      seekTo: handleSlide,
     }));
 
     // 处理切换资源
@@ -97,6 +100,8 @@ const Player = forwardRef(
       if (isComplate) {
         playerRef.current.restartPlay();
         setIsComplate(false);
+      } else if (isStopPlay) {
+        playerRef.current.reloadPlay();
       } else {
         playerRef.current.startPlay();
       }
@@ -115,6 +120,13 @@ const Player = forwardRef(
 
     const handleSlide = (value) => {
       playerRef.current.seekTo(value);
+    };
+
+    const handleStop = () => {
+      playerRef.current.stopPlay();
+      setIsStopPlay(true);
+      setIsPlaying(false);
+      setIsStart(false);
     };
 
     const handleFullScreenIn = () => {
@@ -198,6 +210,7 @@ const Player = forwardRef(
           onAliRenderingStart={() => {
             setError(false);
             setLoading(false);
+            setIsStopPlay(false);
             setIsPlaying(true);
             setIsStart(true);
           }}
