@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { Text, Animated, Easing, SafeAreaView, StyleSheet, Image } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { Slider } from 'react-native-elements';
+import Slider from './Slide';
 
 import { formatTime } from '../lib/utils';
 import useTimeout from '../lib/useTimeout';
@@ -69,6 +69,7 @@ function ControlerView({
   title,
   isFull,
   current,
+  buffer,
   total,
   isPlaying,
   enableFullScreen,
@@ -101,9 +102,7 @@ function ControlerView({
   const [visible, setVisible] = useState(false);
   const [configVisible, setConfigVisible] = useState(false);
   const [qualityVisible, setQualityVisible] = useState(false);
-  const [seek, setSeek] = useState(current);
-  const isSliding = useRef(false);
-  const seekFormat = formatTime(seek);
+  const currentFormat = formatTime(current);
   const totalFormat = formatTime(total);
   const hasQuality = Array.isArray(qualityList) && qualityList.length;
   const quality = qualityList && qualityList.find((o) => o.value === playSource);
@@ -140,12 +139,6 @@ function ControlerView({
   const [_, clear, set] = useTimeout(() => {
     setVisible(false);
   }, controlerDismissTime);
-
-  useEffect(() => {
-    if (!isSliding.current) {
-      setSeek(current);
-    }
-  }, [current]);
 
   useEffect(() => {
     Animated.timing(animateValue, {
@@ -190,7 +183,7 @@ function ControlerView({
           <ControlIcon
             iconStyle={styles.iconLeft}
             name="iconfontdesktop"
-            onPress={() => onCastClick({ seek, playSource })}
+            onPress={() => onCastClick({ current, playSource })}
           />
         )}
         {isFull && (
@@ -224,28 +217,17 @@ function ControlerView({
           onPress={isPlaying ? onPressPause : onPressPlay}
           name={isPlaying ? 'pausecircleo' : 'playcircleo'}
         />
-        <Text style={styles.textTime}>{`${seekFormat.M}:${seekFormat.S}`}</Text>
+        <Text style={styles.textTime}>{`${currentFormat.M}:${currentFormat.S}`}</Text>
         <Slider
-          step={1}
-          value={seek}
-          minimumValue={0}
-          maximumValue={total}
+          progress={current}
+          min={0}
+          max={total}
+          cache={buffer}
           style={styles.bottomSlide}
-          minimumTrackTintColor={themeColor}
-          thumbTintColor="white"
-          maximumTrackTintColor="white"
-          trackStyle={{ height: 2 }}
-          thumbStyle={{ height: 10, width: 10 }}
-          onSlidingStart={() => {
-            isSliding.current = true;
+          onSlidingComplete={(value) => {
+            onSlide(parseInt(value));
           }}
-          onSlidingComplete={() => {
-            isSliding.current = false;
-            onSlide(seek);
-          }}
-          onValueChange={(data) => {
-            setSeek(data);
-          }}
+          themeColor={themeColor}
         />
         <Text style={styles.textTime}>{`${totalFormat.M}:${totalFormat.S}`}</Text>
         {enableFullScreen && (
@@ -255,7 +237,7 @@ function ControlerView({
           />
         )}
       </AnimateLinearGradient>
-      <Progress disable={visible} value={seek} maxValue={total} themeColor={themeColor} />
+      <Progress disable={visible} value={current} maxValue={total} themeColor={themeColor} />
       <ConfigView
         config={configObj}
         visible={configVisible}

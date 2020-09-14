@@ -42,6 +42,7 @@ const Player = forwardRef(
     const [loadingObj, setLoadingObj] = useState({});
     const [total, setTotal] = useState(0);
     const [current, setCurrent] = useState(0);
+    const [buffer, setBuffer] = useState(0);
     const [isStart, setIsStart] = useState(false);
     const { screen, window } = useDimensions();
     const currentAppState = useAppState();
@@ -194,6 +195,7 @@ const Player = forwardRef(
               playerRef.current.seekTo(current);
             } else {
               setCurrent(0);
+              setBuffer(0);
             }
           }}
           onAliLoadingBegin={() => {
@@ -217,6 +219,9 @@ const Player = forwardRef(
           onAliCurrentPositionUpdate={({ nativeEvent }) => {
             setCurrent(nativeEvent.position);
           }}
+          onAliBufferedPositionUpdate={({ nativeEvent }) => {
+            setBuffer(nativeEvent.position);
+          }}
           onAliCompletion={() => {
             setIsComplate(true);
             setIsPlaying(false);
@@ -233,6 +238,7 @@ const Player = forwardRef(
             title={title}
             isFull={isFull}
             current={current}
+            buffer={buffer}
             total={total}
             isError={error}
             poster={poster}
