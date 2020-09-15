@@ -12,10 +12,14 @@ import com.aliyun.player.bean.ErrorInfo;
 import com.aliyun.player.bean.InfoBean;
 import com.aliyun.player.bean.InfoCode;
 import com.aliyun.player.nativeclass.PlayerConfig;
+import com.aliyun.player.nativeclass.TrackInfo;
 import com.aliyun.player.source.UrlSource;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeArray;
+import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
@@ -42,7 +46,8 @@ public class RNAliplayerView extends ViewGroupManager<AliSurfaceView> {
         onCurrentPositionUpdate("onAliCurrentPositionUpdate"),
         onBufferedPositionUpdate("onAliBufferedPositionUpdate"),
         onAutoPlayStart("onAliAutoPlayStart"),
-        onLoopingStart("onAliLoopingStart");
+        onLoopingStart("onAliLoopingStart"),
+        onBitrateChange("onAliBitrateChange");
 
         private final String mName;
 
@@ -263,6 +268,11 @@ public class RNAliplayerView extends ViewGroupManager<AliSurfaceView> {
         updateAliConfig(view, config);
     }
 
+    @ReactProp(name = "selectBitrateIndex")
+    public void selectBitrateIndex(AliSurfaceView view, int bitrateIndex) {
+        view.aliyunVodPlayer.selectTrack(bitrateIndex);
+    }
+
     private void updateAliConfig(AliSurfaceView view, PlayerConfig config) {
         view.aliyunVodPlayer.setConfig(config);
         view.aliyunVodPlayer.prepare();
@@ -295,10 +305,22 @@ public class RNAliplayerView extends ViewGroupManager<AliSurfaceView> {
             @Override
             public void onPrepared() {
                 Log.i(TAG, "onPrepared: " + view.aliyunVodPlayer.getDuration() / 1000);
-
+                WritableArray bitratesArray = new WritableNativeArray();
                 WritableMap event = Arguments.createMap();
+                List<TrackInfo> trackInfos = view.aliyunVodPlayer.getMediaInfo().getTrackInfos();
+                for (TrackInfo item : trackInfos) {
+                    if (item.getVideoBitrate() > 0) {
+                        WritableMap map = new WritableNativeMap();
+                        map.putInt("index", item.getIndex());
+                        map.putInt("width", item.getVideoWidth());
+                        map.putInt("height", item.getVideoHeight());
+                        map.putInt("bitrate", item.getVideoBitrate());
+                        bitratesArray.pushMap(map);
+                    }
+                }
                 int duration = (int) (view.aliyunVodPlayer.getDuration() / 1000);//转换成秒
                 event.putInt("duration", duration);
+                event.putArray("bitrates", bitratesArray);
                 mEventEmitter.receiveEvent(view.getId(), Events.onPrepared.toString(), event);
             }
         });
@@ -369,6 +391,25 @@ public class RNAliplayerView extends ViewGroupManager<AliSurfaceView> {
                 mEventEmitter.receiveEvent(view.getId(), Events.onLoadingEnd.toString(), event);
             }
         });
+
+        view.aliyunVodPlayer.setOnTrackChangedListener(new IPlayer.OnTrackChangedListener() {
+            @Override
+            public void onChangedSuccess(TrackInfo trackInfo) {
+                //切换成功
+                Log.i(TAG, "onChangedSuccess: " + trackInfo.getIndex());
+
+                WritableMap event = Arguments.createMap();
+                event.putInt("index", trackInfo.getIndex());
+                event.putInt("width", trackInfo.getVideoWidth());
+                event.putInt("height", trackInfo.getVideoHeight());
+                mEventEmitter.receiveEvent(view.getId(), Events.onBitrateChange.toString(), event);
+            }
+
+            @Override
+            public void onChangedFail(TrackInfo trackInfo, ErrorInfo errorInfo) {
+                //切换失败。失败原因通过errorInfo.getMsg()获取
+                Log.i(TAG, "onChangedFail: " + errorInfo.getMsg());
+            }
+        });
     }
 }
-

@@ -3,7 +3,7 @@ import { Text, Animated, Easing, SafeAreaView, StyleSheet, Image } from 'react-n
 import LinearGradient from 'react-native-linear-gradient';
 import Slider from './Slide';
 
-import { formatTime } from '../lib/utils';
+import { formatTime, getBitrateLabel } from '../lib/utils';
 import useTimeout from '../lib/useTimeout';
 import PressView from './PressView';
 import ControlIcon from './ControlIcon';
@@ -75,7 +75,8 @@ function ControlerView({
   enableFullScreen,
   enableCast,
   playSource,
-  qualityList,
+  bitrateList,
+  bitrateIndex,
   themeColor,
   poster,
   isStart,
@@ -95,7 +96,7 @@ function ControlerView({
   onPressFullIn,
   onPressFullOut,
   onChangeConfig,
-  onChangeQuality,
+  onChangeBitrate,
   onSlide,
   onCastClick,
 }) {
@@ -104,15 +105,15 @@ function ControlerView({
   const [qualityVisible, setQualityVisible] = useState(false);
   const currentFormat = formatTime(current);
   const totalFormat = formatTime(total);
-  const hasQuality = Array.isArray(qualityList) && qualityList.length;
-  const quality = qualityList && qualityList.find((o) => o.value === playSource);
+  const hasBitrate = Array.isArray(bitrateList) && bitrateList.length;
+  const bitrate = bitrateList && bitrateList.find((o) => o.index === bitrateIndex);
   const [configObj, setConfigObj] = useState({
     setSpeed,
     setScaleMode,
     setLoop,
     setMute,
   });
-  const { label: qualityLabel } = quality || { label: '画质' };
+  const bitrateLabel = getBitrateLabel(bitrate) || '画质';
 
   const { animateValue, bottomAnimate, headerAnimate, opacityAnimate } = useMemo(() => {
     const animateValue = new Animated.Value(0);
@@ -171,12 +172,12 @@ function ControlerView({
       >
         {isFull && <ControlIcon onPress={onPressFullOut} name="left" />}
         <Text style={styles.textTitle}>{title}</Text>
-        {Boolean(hasQuality && isFull) && (
+        {Boolean(hasBitrate && isFull) && (
           <Text
             style={[styles.textQuality, styles.iconLeft]}
             onPress={() => setQualityVisible(true)}
           >
-            {qualityLabel}
+            {bitrateLabel}
           </Text>
         )}
         {enableCast && (
@@ -253,9 +254,10 @@ function ControlerView({
         themeColor={themeColor}
         playSource={playSource}
         visible={qualityVisible}
-        qualityList={qualityList}
+        bitrateList={bitrateList}
+        bitrateIndex={bitrateIndex}
         onChange={(res) => {
-          onChangeQuality(res.value);
+          onChangeBitrate(res.value);
           setQualityVisible(false);
         }}
         onClose={() => setQualityVisible(false)}

@@ -81,6 +81,7 @@ ALIViewPlayer.propTypes = {
   setRotateMode: PropTypes.oneOf([0, 1, 2, 3]), // 设置旋转 0:0度;1:90度;2:180度;3:270度;
   setScaleMode: PropTypes.oneOf([0, 1, 2]), // 设置画面缩放模式 0:宽高比适应;1:宽高比填充;2:拉伸填充;
   configHeader: PropTypes.arrayOf(PropTypes.string), // 配置自定义header
+  selectBitrateIndex: PropTypes.number, // 切换码率
 
   onAliCompletion: PropTypes.func, // 播放完成事件
   onAliError: PropTypes.func, // 出错事件
@@ -94,11 +95,13 @@ ALIViewPlayer.propTypes = {
   onAliBufferedPositionUpdate: PropTypes.func, // 缓冲进度
   onAliAutoPlayStart: PropTypes.func, // 自动播放开始
   onAliLoopingStart: PropTypes.func, // 循环播放开始
+  onAliBitrateChange: PropTypes.func, // 切换清晰度
 };
 
 ALIViewPlayer.defaultProps = {
   setAutoPlay: false,
   setScaleMode: 0,
+  selectBitrateIndex: -1,
 };
 
 const RCTVideo = requireNativeComponent('RNAliplayer');

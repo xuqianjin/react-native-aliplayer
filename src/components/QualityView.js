@@ -3,6 +3,7 @@ import { Text, View, SafeAreaView, StyleSheet } from 'react-native';
 
 import ChooseList from './ChooseList';
 import ControlIcon from './ControlIcon';
+import { getBitrateLabel } from '../lib/utils';
 
 const styles = StyleSheet.create({
   quality: {
@@ -29,10 +30,16 @@ const styles = StyleSheet.create({
   },
 });
 
-function QualityView({ visible, qualityList, playSource, themeColor, onClose, onChange }) {
+function QualityView({ visible, bitrateList, bitrateIndex, themeColor, onClose, onChange }) {
   if (!visible) {
     return null;
   }
+
+  const chooseData = bitrateList.map((o) => {
+    return { value: o.index, label: getBitrateLabel(o) };
+  });
+
+  chooseData.unshift({ label: '自动', value: -1 });
 
   return (
     <SafeAreaView style={styles.quality}>
@@ -40,8 +47,8 @@ function QualityView({ visible, qualityList, playSource, themeColor, onClose, on
         <View style={styles.row}>
           <Text style={styles.textWhite}>画质:</Text>
           <ChooseList
-            data={qualityList}
-            defaultValue={playSource}
+            data={chooseData}
+            defaultValue={bitrateIndex}
             themeColor={themeColor}
             onChange={onChange}
           />

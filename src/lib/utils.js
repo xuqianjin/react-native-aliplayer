@@ -5,3 +5,11 @@ export const formatTime = (time) => {
   const M = m > 9 ? String(m) : '0' + m;
   return { M, S };
 };
+
+export const getBitrateLabel = (bitrate) => {
+  if (!bitrate) {
+    return '';
+  }
+  const { width, height } = bitrate;
+  return `${Math.min(width, height)}p`;
+};

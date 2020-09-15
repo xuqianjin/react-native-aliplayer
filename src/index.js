@@ -19,13 +19,13 @@ const Player = forwardRef(
     {
       title,
       source,
-      qualityList,
       poster,
       style,
       themeColor,
       onFullScreen,
       onCompletion,
       setAutoPlay,
+      onChangeBitrate,
       ...restProps
     },
     ref
@@ -44,9 +44,10 @@ const Player = forwardRef(
     const [current, setCurrent] = useState(0);
     const [buffer, setBuffer] = useState(0);
     const [isStart, setIsStart] = useState(false);
+    const [bitrateList, setBitrateList] = useState([]);
+    const [bitrateIndex, setBitrateIndex] = useState();
     const { screen, window } = useDimensions();
     const currentAppState = useAppState();
-    const isChangeQuality = useRef(false);
 
     useImperativeHandle(ref, () => ({
       play: (play) => {
@@ -70,7 +71,6 @@ const Player = forwardRef(
     // 处理切换资源
     useEffect(() => {
       if (source) {
-        isChangeQuality.current = false;
         changeSource(source);
       }
     }, [source]);
@@ -146,9 +146,8 @@ const Player = forwardRef(
       playerRef.current.setNativeProps(config);
     };
 
-    const handleChangeQuality = (newSource) => {
-      isChangeQuality.current = true;
-      changeSource(newSource);
+    const handleChangeBitrate = (newIndex) => {
+      setBitrateIndex(newIndex);
     };
 
     const isOrientationLandscape = window.width > window.height;
@@ -185,18 +184,16 @@ const Player = forwardRef(
           ref={playerRef}
           source={playSource}
           setAutoPlay={setAutoPlay}
+          selectBitrateIndex={bitrateIndex}
           style={isFull ? fullwindowStyle : StyleSheet.absoluteFill}
           onAliPrepared={({ nativeEvent }) => {
             setTotal(nativeEvent.duration);
+            setBitrateList(nativeEvent.bitrates);
             if (isPlaying) {
               playerRef.current.startPlay();
             }
-            if (isChangeQuality.current) {
-              playerRef.current.seekTo(current);
-            } else {
-              setCurrent(0);
-              setBuffer(0);
-            }
+            setCurrent(0);
+            setBuffer(0);
           }}
           onAliLoadingBegin={() => {
             setLoading(true);
@@ -231,6 +228,9 @@ const Player = forwardRef(
             setError(true);
             setErrorObj(nativeEvent);
           }}
+          onAliBitrateChange={({ nativeEvent }) => {
+            onChangeBitrate(nativeEvent);
+          }}
         >
           <StatusBar hidden={isFull} />
           <ControlerView
@@ -249,7 +249,8 @@ const Player = forwardRef(
             loadingObj={loadingObj}
             themeColor={themeColor}
             playSource={playSource}
-            qualityList={qualityList}
+            bitrateList={bitrateList}
+            bitrateIndex={bitrateIndex}
             onSlide={handleSlide}
             onPressPlay={handlePlay}
             onPressPause={handlePause}
@@ -257,7 +258,7 @@ const Player = forwardRef(
             onPressFullIn={handleFullScreenIn}
             onPressFullOut={handleFullScreenOut}
             onChangeConfig={handleChangeConfig}
-            onChangeQuality={handleChangeQuality}
+            onChangeBitrate={handleChangeBitrate}
           />
         </ALIViewPlayer>
       </View>
@@ -267,12 +268,6 @@ const Player = forwardRef(
 Player.propTypes = {
   ...ALIViewPlayer.propTypes,
   source: PropTypes.string, // 播放地址
-  qualityList: PropTypes.arrayOf(
-    PropTypes.shape({
-      label: PropTypes.string, // 标清 高清
-      value: PropTypes.string, // 对应播放地址
-    }) // 播放列表
-  ),
   poster: Image.propTypes.source, // 封面图
   onFullScreen: PropTypes.func, // 全屏回调事件
   onCompletion: PropTypes.func, // 播放完成事件
@@ -280,12 +275,14 @@ Player.propTypes = {
   themeColor: PropTypes.string, // 播放器主题
   enableCast: PropTypes.bool, // 是否显示投屏按钮
   onCastClick: PropTypes.func, // 投屏按钮点击事件
+  onChangeBitrate: PropTypes.func, // 切换清晰度
 };
 
 Player.defaultProps = {
   onFullScreen: () => {},
   onCompletion: () => {},
   onCastClick: () => {},
+  onChangeBitrate: () => {},
   themeColor: '#F85959',
   enableHardwareDecoder: false,
   setSpeed: 1.0,
