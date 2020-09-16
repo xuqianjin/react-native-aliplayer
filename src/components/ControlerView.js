@@ -16,7 +16,7 @@ const GradientWhite = 'rgba(0,0,0,0)';
 const GradientBlack = 'rgba(0,0,0,0.3)';
 const controlerHeight = 40;
 const controlerDismissTime = 5000;
-const AnimateLinearGradient = Animated.createAnimatedComponent(LinearGradient);
+const AnimateView = Animated.View;
 
 const styles = StyleSheet.create({
   controler: {
@@ -163,13 +163,13 @@ function ControlerView({
   return (
     <SafeAreaView style={styles.controler}>
       {!isStart && <Image source={poster} resizeMode="cover" style={StyleSheet.absoluteFill} />}
-      <AnimateLinearGradient
-        colors={[GradientBlack, GradientWhite]}
+      <AnimateView
         style={[
           styles.header,
           { opacity: opacityAnimate, transform: [{ translateY: headerAnimate }] },
         ]}
       >
+        <LinearGradient style={StyleSheet.absoluteFill} colors={[GradientBlack, GradientWhite]} />
         {isFull && <ControlIcon onPress={onPressFullOut} name="left" />}
         <Text style={styles.textTitle}>{title}</Text>
         {Boolean(hasBitrate && isFull) && (
@@ -194,7 +194,7 @@ function ControlerView({
             onPress={() => setConfigVisible(true)}
           />
         )}
-      </AnimateLinearGradient>
+      </AnimateView>
       <PressView style={styles.stateview} onPress={handlePressPlayer} activeOpacity={1}>
         <StateView
           isError={isError}
@@ -207,13 +207,13 @@ function ControlerView({
           onPressReload={onPressReload}
         />
       </PressView>
-      <AnimateLinearGradient
-        colors={[GradientWhite, GradientBlack]}
+      <AnimateView
         style={[
           styles.bottom,
           { opacity: opacityAnimate, transform: [{ translateY: bottomAnimate }] },
         ]}
       >
+        <LinearGradient style={StyleSheet.absoluteFill} colors={[GradientWhite, GradientBlack]} />
         <ControlIcon
           onPress={isPlaying ? onPressPause : onPressPlay}
           name={isPlaying ? 'pausecircleo' : 'playcircleo'}
@@ -237,7 +237,7 @@ function ControlerView({
             name={isFull ? 'shrink' : 'arrowsalt'}
           />
         )}
-      </AnimateLinearGradient>
+      </AnimateView>
       <Progress disable={visible} value={current} maxValue={total} themeColor={themeColor} />
       <ConfigView
         config={configObj}
