@@ -155,6 +155,11 @@
     [self.player setConfig:config];
 }
 
+- (void)setSelectBitrateIndex:(int)selectBitrateIndex{
+    _selectBitrateIndex = selectBitrateIndex;
+    [self.player selectTrack:selectBitrateIndex];
+}
+
 #pragma mark - AVPDelegate
 /**
  @brief 错误代理回调
@@ -260,6 +265,52 @@
   if (self.onAliLoadingProgress) {
     self.onAliLoadingProgress(@{@"percent":@(progress)});
   }
+}
+
+
+/**
+ @brief 获取track信息回调
+ @param player 播放器player指针
+ @param info track流信息数组 参考AVPTrackInfo
+ */
+- (void)onTrackReady:(AliPlayer*)player info:(NSArray<AVPTrackInfo*>*)info {
+    if (self.onAliBitrateReady) {
+        NSMutableArray * trackArray = [NSMutableArray array];
+        for (NSInteger i=0; i<info.count; i++) {
+            AVPTrackInfo * track = info[i];
+            if (track.trackBitrate>0) {
+                [trackArray addObject:@{@"index":@(track.trackIndex),
+                                        @"width":@(track.videoWidth),
+                                        @"height":@(track.videoHeight),
+                                        @"bitrate":@(track.trackBitrate)
+                }];
+            }
+            
+        }
+        
+        self.onAliBitrateReady(@{@"bitrates":trackArray});
+    }
+}
+
+/**
+ @brief track切换完成回调
+ @param player 播放器player指针
+ @param info 切换后的信息 参考AVPTrackInfo
+ @see AVPTrackInfo
+ */
+/****
+ @brief Track switchover completion callback.
+ @param player Player pointer.
+ @param info Track switchover completion information. See AVPTrackInfo.
+ @see AVPTrackInfo
+ */
+- (void)onTrackChanged:(AliPlayer*)player info:(AVPTrackInfo*)info{
+    if (self.onAliBitrateChange) {
+        self.onAliBitrateChange(@{@"index":@(info.trackIndex),
+                                  @"width":@(info.videoWidth),
+                                  @"height":@(info.videoHeight)
+                                });
+    }
 }
 
 @end

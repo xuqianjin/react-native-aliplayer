@@ -31,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,assign) int  setRotateMode;
 @property(nonatomic,assign) int  setScaleMode;
 @property(nonatomic,strong) NSArray * configHeader;
+@property(nonatomic,assign) int  selectBitrateIndex;
 
 //定义要暴露的事件
 @property (nonatomic, copy) RCTBubblingEventBlock onAliCompletion;
@@ -45,7 +46,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) RCTBubblingEventBlock onAliBufferedPositionUpdate;
 @property (nonatomic, copy) RCTBubblingEventBlock onAliAutoPlayStart;
 @property (nonatomic, copy) RCTBubblingEventBlock onAliLoopingStart;
-
+@property (nonatomic, copy) RCTBubblingEventBlock onAliBitrateReady;
+@property (nonatomic, copy) RCTBubblingEventBlock onAliBitrateChange;
 
 -(void)startPlay;
 -(void)pausePlay;
