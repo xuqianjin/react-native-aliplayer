@@ -188,7 +188,6 @@ const Player = forwardRef(
           style={isFull ? fullwindowStyle : StyleSheet.absoluteFill}
           onAliPrepared={({ nativeEvent }) => {
             setTotal(nativeEvent.duration);
-            setBitrateList(nativeEvent.bitrates);
             if (isPlaying) {
               playerRef.current.startPlay();
             }
@@ -230,6 +229,9 @@ const Player = forwardRef(
           }}
           onAliBitrateChange={({ nativeEvent }) => {
             onChangeBitrate(nativeEvent);
+          }}
+          onAliBitrateReady={({ nativeEvent }) => {
+            setBitrateList(nativeEvent.bitrates);
           }}
         >
           <StatusBar hidden={isFull} />

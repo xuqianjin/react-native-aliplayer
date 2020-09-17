@@ -47,7 +47,8 @@ public class RNAliplayerView extends ViewGroupManager<AliSurfaceView> {
         onBufferedPositionUpdate("onAliBufferedPositionUpdate"),
         onAutoPlayStart("onAliAutoPlayStart"),
         onLoopingStart("onAliLoopingStart"),
-        onBitrateChange("onAliBitrateChange");
+        onBitrateChange("onAliBitrateChange"),
+        onBitrateReady("onAliBitrateReady");
 
         private final String mName;
 
@@ -305,8 +306,14 @@ public class RNAliplayerView extends ViewGroupManager<AliSurfaceView> {
             @Override
             public void onPrepared() {
                 Log.i(TAG, "onPrepared: " + view.aliyunVodPlayer.getDuration() / 1000);
+                
                 WritableArray bitratesArray = new WritableNativeArray();
-                WritableMap event = Arguments.createMap();
+                WritableMap prepareEvent = Arguments.createMap();
+                int duration = (int) (view.aliyunVodPlayer.getDuration() / 1000);//转换成秒
+                prepareEvent.putInt("duration", duration);
+                mEventEmitter.receiveEvent(view.getId(), Events.onPrepared.toString(), prepareEvent);
+
+                WritableMap bitrateEvent = Arguments.createMap();
                 List<TrackInfo> trackInfos = view.aliyunVodPlayer.getMediaInfo().getTrackInfos();
                 for (TrackInfo item : trackInfos) {
                     if (item.getVideoBitrate() > 0) {
@@ -318,10 +325,8 @@ public class RNAliplayerView extends ViewGroupManager<AliSurfaceView> {
                         bitratesArray.pushMap(map);
                     }
                 }
-                int duration = (int) (view.aliyunVodPlayer.getDuration() / 1000);//转换成秒
-                event.putInt("duration", duration);
-                event.putArray("bitrates", bitratesArray);
-                mEventEmitter.receiveEvent(view.getId(), Events.onPrepared.toString(), event);
+                bitrateEvent.putArray("bitrates", bitratesArray);
+                mEventEmitter.receiveEvent(view.getId(), Events.onBitrateReady.toString(), bitrateEvent);
             }
         });
         view.aliyunVodPlayer.setOnCompletionListener(new IPlayer.OnCompletionListener() {

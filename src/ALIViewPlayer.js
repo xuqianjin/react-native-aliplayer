@@ -96,6 +96,7 @@ ALIViewPlayer.propTypes = {
   onAliAutoPlayStart: PropTypes.func, // 自动播放开始
   onAliLoopingStart: PropTypes.func, // 循环播放开始
   onAliBitrateChange: PropTypes.func, // 切换清晰度
+  onAliBitrateReady: PropTypes.func, // 获取清晰度回调
 };
 
 ALIViewPlayer.defaultProps = {
