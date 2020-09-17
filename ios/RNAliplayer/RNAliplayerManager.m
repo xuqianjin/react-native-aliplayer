@@ -25,6 +25,7 @@ RCT_EXPORT_VIEW_PROPERTY(setMirrorMode, int)
 RCT_EXPORT_VIEW_PROPERTY(setRotateMode, int)
 RCT_EXPORT_VIEW_PROPERTY(setScaleMode, int)
 RCT_EXPORT_VIEW_PROPERTY(configHeader, NSArray)
+RCT_EXPORT_VIEW_PROPERTY(selectBitrateIndex, int)
 
 //暴露方法（原生调用，js回调）
 RCT_EXPORT_VIEW_PROPERTY(onAliCompletion, RCTBubblingEventBlock)
@@ -39,6 +40,8 @@ RCT_EXPORT_VIEW_PROPERTY(onAliCurrentPositionUpdate, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onAliBufferedPositionUpdate, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onAliAutoPlayStart, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onAliLoopingStart, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onAliBitrateReady, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onAliBitrateChange, RCTBubblingEventBlock)
 
 //暴露方法（js调用，原生回调）
 RCT_EXPORT_METHOD(startPlay:(nonnull NSNumber *) reactTag){
