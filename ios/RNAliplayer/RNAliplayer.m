@@ -157,7 +157,13 @@
 
 - (void)setSelectBitrateIndex:(int)selectBitrateIndex{
     _selectBitrateIndex = selectBitrateIndex;
-    [self.player selectTrack:selectBitrateIndex];
+    if (selectBitrateIndex==-1) {
+        [self.player selectTrack:SELECT_AVPTRACK_TYPE_VIDEO_AUTO];
+    }
+    else{
+        [self.player selectTrack:selectBitrateIndex];
+    }
+    
 }
 
 #pragma mark - AVPDelegate
