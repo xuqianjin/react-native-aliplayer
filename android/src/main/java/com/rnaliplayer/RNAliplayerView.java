@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.aliyun.player.AliPlayerFactory;
 import com.aliyun.player.IPlayer;
 import com.aliyun.player.bean.ErrorInfo;
 import com.aliyun.player.bean.InfoBean;
@@ -271,7 +272,11 @@ public class RNAliplayerView extends ViewGroupManager<AliSurfaceView> {
 
     @ReactProp(name = "selectBitrateIndex")
     public void selectBitrateIndex(AliSurfaceView view, int bitrateIndex) {
-        view.aliyunVodPlayer.selectTrack(bitrateIndex);
+        if (bitrateIndex == -1) {
+            view.aliyunVodPlayer.selectTrack(TrackInfo.AUTO_SELECT_INDEX);
+        } else {
+            view.aliyunVodPlayer.selectTrack(bitrateIndex);
+        }
     }
 
     private void updateAliConfig(AliSurfaceView view, PlayerConfig config) {
