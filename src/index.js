@@ -26,6 +26,8 @@ const Player = forwardRef(
       onCompletion,
       setAutoPlay,
       onChangeBitrate,
+      onProgress,
+      onPrepare,
       ...restProps
     },
     ref
@@ -193,6 +195,7 @@ const Player = forwardRef(
             }
             setCurrent(0);
             setBuffer(0);
+            onPrepare({ duration: nativeEvent.position });
           }}
           onAliLoadingBegin={() => {
             setLoading(true);
@@ -214,9 +217,11 @@ const Player = forwardRef(
           }}
           onAliCurrentPositionUpdate={({ nativeEvent }) => {
             setCurrent(nativeEvent.position);
+            onProgress({ progress: nativeEvent.position });
           }}
           onAliBufferedPositionUpdate={({ nativeEvent }) => {
             setBuffer(nativeEvent.position);
+            onProgress({ buffered: nativeEvent.position });
           }}
           onAliCompletion={() => {
             setIsComplate(true);
@@ -278,6 +283,8 @@ Player.propTypes = {
   enableCast: PropTypes.bool, // 是否显示投屏按钮
   onCastClick: PropTypes.func, // 投屏按钮点击事件
   onChangeBitrate: PropTypes.func, // 切换清晰度
+  onProgress: PropTypes.func, // 进度回调
+  onPrepare: PropTypes.func, // 播放准备回调
 };
 
 Player.defaultProps = {
@@ -285,6 +292,8 @@ Player.defaultProps = {
   onCompletion: () => {},
   onCastClick: () => {},
   onChangeBitrate: () => {},
+  onProgress: () => {},
+  onPrepare: () => {},
   themeColor: '#F85959',
   enableHardwareDecoder: false,
   setSpeed: 1.0,
