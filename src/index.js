@@ -28,6 +28,7 @@ const Player = forwardRef(
       onChangeBitrate,
       onProgress,
       onPrepare,
+      isLandscape,
       ...restProps
     },
     ref
@@ -152,7 +153,7 @@ const Player = forwardRef(
       setBitrateIndex(newIndex);
     };
 
-    const isOrientationLandscape = window.width > window.height;
+    const isOrientationLandscape = isLandscape;
 
     const fullscreenStyle = {
       position: 'absolute',
@@ -285,6 +286,7 @@ Player.propTypes = {
   onChangeBitrate: PropTypes.func, // 切换清晰度
   onProgress: PropTypes.func, // 进度回调
   onPrepare: PropTypes.func, // 播放准备回调
+  isLandscape: PropTypes.bool, // 全屏是否横屏
 };
 
 Player.defaultProps = {
@@ -298,6 +300,7 @@ Player.defaultProps = {
   enableHardwareDecoder: false,
   setSpeed: 1.0,
   setScaleMode: 0,
+  isLandscape: true,
 };
 
 export default React.memo(Player);

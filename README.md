@@ -37,6 +37,7 @@ const source='http://200024424.vod.myqcloud.com/200024424_709ae516bdf811e6ad3999
 | onChangeBitrate  | 分辨率切换       |
 | onProgress       | 进度回调         |
 | onPrepare        | 播放准备回调     |
+| isLandscape      | 全屏是否横屏     |
 
 ## Method
 
