@@ -102,7 +102,6 @@ ALIViewPlayer.propTypes = {
 ALIViewPlayer.defaultProps = {
   setAutoPlay: false,
   setScaleMode: 0,
-  selectBitrateIndex: -1,
 };
 
 const RCTVideo = requireNativeComponent('RNAliplayer');
